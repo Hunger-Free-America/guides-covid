@@ -4,7 +4,7 @@ var hbs = require('hbs');
 var logger = require('morgan');
 var path = require('path');
 var bodyParser = require('body-parser');
-var pgp = require('pg-promise');
+var pgp = require('pg-promise')();
 
 
 const db = pgp(process.env.DATABASE_URL);
