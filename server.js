@@ -7,7 +7,7 @@ var bodyParser = require('body-parser');
 var pgp = require('pg-promise');
 
 
-const db = pgp.Client(process.env.DATABASE_URL);
+const db = pgp(process.env.DATABASE_URL);
 
 app.use(session({
     store: new pgSession({
