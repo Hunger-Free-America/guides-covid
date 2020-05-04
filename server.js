@@ -4,10 +4,10 @@ var hbs = require('hbs');
 var logger = require('morgan');
 var path = require('path');
 var bodyParser = require('body-parser');
-var pgp = require('pg');
+var pgp = require('pg-promise');
 
 
-const db = pgp(process.env.DATABASE_URL);
+const db = pgp.Client(process.env.DATABASE_URL);
 
 app.use(session({
     store: new pgSession({
