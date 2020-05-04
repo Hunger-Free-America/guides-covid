@@ -5,6 +5,7 @@ var logger = require('morgan');
 var path = require('path');
 var bodyParser = require('body-parser');
 var pgp = require('pg-promise')();
+var pgSession = require('connect-pg-simple')(session);
 
 const db = pgp(process.env.DATABASE_URL);
 
