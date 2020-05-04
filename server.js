@@ -6,8 +6,9 @@ var path = require('path');
 var bodyParser = require('body-parser');
 var pgp = require('pg-promise')();
 
-
 const db = pgp(process.env.DATABASE_URL);
+
+var app = express();
 
 app.use(session({
     store: new pgSession({
@@ -25,8 +26,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 var index = require('./routes/index');
-
-var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
