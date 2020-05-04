@@ -15,3 +15,5 @@ app.use(session({
     saveUninitialized: false,
     cookie: { maxAge: 10 * 10 * 6000000 },
   }));
+  
+  var app = express();
