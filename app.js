@@ -7,16 +7,18 @@ var bodyParser = require('body-parser');
 var pgp = require('pg-promise')();
 var pgSession = require('connect-pg-simple')(session);
 
-const db = pgp(process.env.DATABASE_URL);
+const db = pgp(process.env.DATABASE_URL || "postgres://atticus:Mockingbird101!@localhost:5432/guidesdb");
 
 var app = express();
+var index = require('./routes/index');
+
 
 app.use(session({
     store: new pgSession({
-        conString: process.env.DATABASE_URL || "postgres://localhost:5432/yourproject",
+        conString: process.env.DATABASE_URL || "postgres://atticus:Mockingbird101!@localhost:5432/guidesdb",
     }),
     key: 'user_sid',
-    secret: process.env.SESSION_SECRET,
+    secret: (process.env.SESSION_SECRET || 'ILoveNana1213'),
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 10 * 10 * 6000000 },
@@ -26,7 +28,6 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-var index = require('./routes/index');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
