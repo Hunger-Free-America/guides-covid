@@ -8,7 +8,7 @@ var products;
 
 const Cart = require('../models/cart');
 
-db.any('SELECT * FROM salesforce.products')
+db.any('SELECT * FROM salesforce.product2')
   .then(function (data) {
     products = data;
     console.log(products);
