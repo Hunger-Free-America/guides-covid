@@ -8,7 +8,7 @@ var products;
 
 const Cart = require('../models/cart');
 
-db.any('SELECT * FROM products')
+db.any('SELECT * FROM salesforce.products')
   .then(function (data) {
     products = data;
     console.log(products);
@@ -35,17 +35,17 @@ router.get('/add/:id', function (req, res, next) {
   res.redirect('/');
 });
 
-router.get('/product/:id', function (req, res, next) {
-  var productId = req.params.id;
-  db.one('SELECT * FROM products WHERE id = $1', [productId])
+router.get('/product/:SKU', function (req, res, next) {
+  var productSKU = req.params.SKU;
+  db.one('SELECT * FROM products WHERE productcode = $1 AND IsActive = TRUE', [productSKU])
     .then(function (data) {
       let product = data;
       console.log(product);
       res.render('product', {
-        id: product.id,
-        title: product.title,
+        id: product.productcode,
+        title: product.Name,
         description: product.description,
-        price: product.price
+        //price: product.price
       });
     })
     .catch(function (error) {
