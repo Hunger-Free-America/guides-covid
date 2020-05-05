@@ -4,10 +4,10 @@ var hbs = require('hbs');
 var logger = require('morgan');
 var path = require('path');
 var bodyParser = require('body-parser');
-var pgp = require('pg-promise')();
-var pgSession = require('connect-pg-simple')(session);
 
-const db = pgp(process.env.DATABASE_URL || "postgres://atticus:Mockingbird101!@localhost:5432/guidesdb");
+const db = require('./database');
+
+var pgSession = require('connect-pg-simple')(session);
 
 var app = express();
 var index = require('./routes/index');
@@ -15,7 +15,7 @@ var index = require('./routes/index');
 
 app.use(session({
     store: new pgSession({
-        conString: process.env.DATABASE_URL || "postgres://atticus:Mockingbird101!@localhost:5432/guidesdb",
+        conString: db.$cn,
     }),
     key: 'user_sid',
     secret: (process.env.SESSION_SECRET || 'ILoveNana1213'),

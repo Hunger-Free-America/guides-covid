@@ -1,25 +1,33 @@
 const express = require('express');
 const router = express.Router();
+const db = require('../database');
 
 
 const fs = require('fs');
+var products;
 
 const Cart = require('../models/cart');
-var products = JSON.parse(fs.readFileSync('./data/products.json', 'utf8'));
+
+db.any('SELECT * FROM products')
+  .then(function (data) {
+    products = data;
+    console.log(products);
+  })
+  .catch(function (error) {
+    console.error(error);
+  });
 
 router.get('/', function (req, res, next) {
-  res.render('index', 
-  { 
+  res.render('index', {
     title: 'NodeJS Shopping Cart',
     products: products
-  }
-  );
+  });
 });
 
-router.get('/add/:id', function(req, res, next) {
+router.get('/add/:id', function (req, res, next) {
   var productId = req.params.id;
   var cart = new Cart(req.session.cart ? req.session.cart : {});
-  var product = products.filter(function(item) {
+  var product = products.filter(function (item) {
     return item.id == productId;
   });
   cart.add(product[0], productId);
@@ -27,7 +35,26 @@ router.get('/add/:id', function(req, res, next) {
   res.redirect('/');
 });
 
-router.get('/cart', function(req, res, next) {
+router.get('/product/:id', function (req, res, next) {
+  var productId = req.params.id;
+  db.one('SELECT * FROM products WHERE id = $1', [productId])
+    .then(function (data) {
+      let product = data;
+      console.log(product);
+      res.render('product', {
+        id: product.id,
+        title: product.title,
+        description: product.description,
+        price: product.price
+      });
+    })
+    .catch(function (error) {
+      console.error(error);
+    });
+
+});
+
+router.get('/cart', function (req, res, next) {
   if (!req.session.cart) {
     return res.render('cart', {
       products: null
@@ -41,7 +68,7 @@ router.get('/cart', function(req, res, next) {
   });
 });
 
-router.get('/remove/:id', function(req, res, next) {
+router.get('/remove/:id', function (req, res, next) {
   var productId = req.params.id;
   var cart = new Cart(req.session.cart ? req.session.cart : {});
 
