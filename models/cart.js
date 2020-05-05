@@ -12,6 +12,7 @@ module.exports = function Cart(cart) {
         cartItem.price = cartItem.item.price * cartItem.quantity;
         this.totalItems++;
         this.totalPrice += cartItem.item.price;
+        console.log(this.items);
     };
 
     this.remove = function(id) {
