@@ -37,7 +37,7 @@ router.get('/add/:id', function (req, res, next) {
 
 router.get('/product/:SKU', function (req, res, next) {
   var productSKU = req.params.SKU;
-  db.one('SELECT * FROM products WHERE productcode = $1 AND IsActive = TRUE', [productSKU])
+  db.one('SELECT * FROM salesforce.product2 WHERE productcode = $1 AND IsActive = TRUE', [productSKU])
     .then(function (data) {
       let product = data;
       console.log(product);
