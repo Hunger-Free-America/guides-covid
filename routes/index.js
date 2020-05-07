@@ -10,7 +10,12 @@ conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD, process.env.SF_SEC_
     if (err) { return console.error(err); }
     console.log(res);
   });
-});
+});  
+
+console.log("User ID: " + userInfo.id);
+console.log("Org ID: " + userInfo.organizationId);
+
+
 
 
 
@@ -94,12 +99,12 @@ var pricebookEntries;
 //get active pricebook. will need refactoring in multiple pricebooks are used.
 db.one('SELECT sfid FROM salesforce.pricebook2 WHERE isActive = TRUE')
   .then(data => {
-    console.log('86: pricebook:' + data.sfid);
+    console.log('pricebook:' + data.sfid);
     pricebook = data.sfid;
 
     db.any('SELECT productcode, sfid FROM salesforce.pricebookEntry WHERE pricebook2Id = $1', [pricebook])
       .then(data => {
-        console.log('91: pbe: ' + JSON.stringify(data));
+        //console.log('91: pbe: ' + JSON.stringify(data));
         pricebookEntries = data;
       })
       .catch(error => {
@@ -157,7 +162,13 @@ router.get('/submit', function (req, res, next) {
       records: orderItems
     }
   });
-  console.log('order: ' + JSON.stringify(order));
+  var body = JSON.stringify(order);
+  conn.apex.post("/services/data/v48.0/commerce/sale/order", body, function(err, res) {
+    if (err) { return console.error(err); }
+    console.log("response: ", res);
+    // the response object structure depends on the definition of apex class
+  })
+  //console.log('order: ' + JSON.stringify(order));
   /*
    * If company name field is blank order account id = household account.
    * order authorized by id = contact id.
