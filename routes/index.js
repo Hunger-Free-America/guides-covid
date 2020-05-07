@@ -164,7 +164,7 @@ router.get('/submit', function (req, res, next) {
   var body = JSON.stringify(order);
   conn.request({
     method: 'post',
-    url: '/commerce/sale/order',
+    url: '/services/data/v48.0/commerce/sale/order',
     headers: {
       'Content-Type': 'application/json'
     },
