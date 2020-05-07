@@ -12,13 +12,6 @@ conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD, process.env.SF_SEC_
   });
 });  
 
-console.log("User ID: " + userInfo.id);
-console.log("Org ID: " + userInfo.organizationId);
-
-
-
-
-
 const fs = require('fs');
 var products;
 
