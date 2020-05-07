@@ -3,14 +3,20 @@ const router = express.Router();
 const db = require('../database');
 const jsforce = require('jsforce');
 
-var conn =  new jsforce.Connection({loginUrl: 'https://test.salesforce.com'});
-conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD, process.env.SF_SEC_TOKEN, function(err, res) {
-  if (err) { return console.error(err); }
-  conn.query('SELECT Id, Name FROM Account', function(err, res) {
-    if (err) { return console.error(err); }
+var conn = new jsforce.Connection({
+  loginUrl: 'https://test.salesforce.com'
+});
+conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD, process.env.SF_SEC_TOKEN, function (err, res) {
+  if (err) {
+    return console.error(err);
+  }
+  conn.query('SELECT Id, Name FROM Account', function (err, res) {
+    if (err) {
+      return console.error(err);
+    }
     console.log(res);
   });
-});  
+});
 
 const fs = require('fs');
 var products;
@@ -156,11 +162,14 @@ router.get('/submit', function (req, res, next) {
     }
   });
   var body = JSON.stringify(order);
-  conn.conn.request({
+  conn.request({
     method: 'post',
     url: '/commerce/sale/order',
-    body}, function(err, res) {
-    if (err) { return console.error(err); }
+    body
+  }, function (err, res) {
+    if (err) {
+      return console.error(err);
+    }
     console.log("response: ", res);
     // the response object structure depends on the definition of apex class
   });
