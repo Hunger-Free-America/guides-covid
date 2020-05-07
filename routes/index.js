@@ -139,6 +139,7 @@ router.get('/submit', function (req, res, next) {
     },
     EffectiveDate: Date.now(),
     Status: 'Draft',
+    accountId: '001R000001aJOrXIAW',
     Pricebook2Id: pricebook,
     orderItems: {
       records: orderItems
