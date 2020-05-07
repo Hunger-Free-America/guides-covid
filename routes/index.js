@@ -86,7 +86,7 @@ db.one('SELECT sfid FROM salesforce.pricebook2 WHERE isActive = TRUE')
     console.log('86: pricebook:' + data.sfid);
     pricebook = data.sfid;
 
-    db.any('SELECT productcode, sfid FROM salesforce.pricebook2Entries WHERE pricebook2Id = $1', [pricebook])
+    db.any('SELECT productcode, sfid FROM salesforce.pricebookEntry WHERE pricebook2Id = $1', [pricebook])
       .then(data => {
         console.log('91: pbe: ' + JSON.stringify(data));
         pricebookEntries = data;
