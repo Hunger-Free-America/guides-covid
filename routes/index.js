@@ -4,7 +4,7 @@ const db = require('../database');
 const jsforce = require('jsforce');
 
 var conn =  new jsforce.Connection({loginUrl: 'https://test.salesforce.com'});
-conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD, function(err, res) {
+conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD, process.env.SF_SEC_TOKEN, function(err, res) {
   if (err) { return console.error(err); }
   conn.query('SELECT Id, Name FROM Account', function(err, res) {
     if (err) { return console.error(err); }
