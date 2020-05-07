@@ -1,6 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../database');
+const jsforce = require('jsforce');
+
+var conn =  new jsforce.Connection({loginUrl: 'https://test.salesforce.com'});
+conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD, function(err, res) {
+  if (err) { return console.error(err); }
+  conn.query('SELECT Id, Name FROM Account', function(err, res) {
+    if (err) { return console.error(err); }
+    console.log(res);
+  });
+});
+
 
 
 const fs = require('fs');
@@ -132,19 +143,20 @@ router.get('/submit', function (req, res, next) {
     });
     console.log(orderItems);
   }
-
-  var order = {
+  var date = new Date(Date.now());
+  var order = []
+  order.push({
     attributes: {
       type: 'order'
     },
-    EffectiveDate: Date.now(),
+    EffectiveDate: date.toISOString(),
     Status: 'Draft',
     accountId: '001R000001aJOrXIAW',
     Pricebook2Id: pricebook,
     orderItems: {
       records: orderItems
     }
-  }
+  });
   console.log('order: ' + JSON.stringify(order));
   /*
    * If company name field is blank order account id = household account.
