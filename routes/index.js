@@ -137,7 +137,7 @@ router.get('/submit', function (req, res, next) {
     attributes: {
       type: 'order'
     },
-    EffectiveDate: Date.today(),
+    EffectiveDate: Date.now(),
     Status: 'Draft',
     Pricebook2Id: pricebook,
     orderItems: orderItems,
