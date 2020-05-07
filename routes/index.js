@@ -165,6 +165,9 @@ router.get('/submit', function (req, res, next) {
   conn.request({
     method: 'post',
     url: '/commerce/sale/order',
+    headers: {
+      'Content-Type': 'application/json'
+    },
     body
   }, function (err, res) {
     if (err) {
