@@ -140,9 +140,11 @@ router.get('/submit', function (req, res, next) {
     EffectiveDate: Date.now(),
     Status: 'Draft',
     Pricebook2Id: pricebook,
-    orderItems: orderItems,
+    orderItems: {
+      records: orderItems
+    }
   }
-  console.log(order);
+  console.log('order: ' + JSON.stringify(order));
   /*
    * If company name field is blank order account id = household account.
    * order authorized by id = contact id.
