@@ -156,11 +156,14 @@ router.get('/submit', function (req, res, next) {
     }
   });
   var body = JSON.stringify(order);
-  conn.apex.post("/services/data/v48.0/commerce/sale/order", body, function(err, res) {
+  conn.conn.request({
+    method: 'post',
+    url: '/commerce/sale/order',
+    body}, function(err, res) {
     if (err) { return console.error(err); }
     console.log("response: ", res);
     // the response object structure depends on the definition of apex class
-  })
+  });
   //console.log('order: ' + JSON.stringify(order));
   /*
    * If company name field is blank order account id = household account.
