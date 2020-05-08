@@ -166,7 +166,7 @@ router.get('/submit', function (req, res, next) {
   var body = JSON.stringify(order);
 
   console.log('fuck u');
-  console.log('instance url:' + conn.instanceUrl);
+  console.log('access Token:' + conn.accessToken);
 
   conn.request({
     method: 'post',
