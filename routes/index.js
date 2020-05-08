@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../database');
-const jsforce = require('jsforce');
-
 var jsforce = require('jsforce');
+
 var conn = new jsforce.Connection({
   // you can change loginUrl to connect to sandbox or prerelease env.
   loginUrl : 'https://test.salesforce.com'
