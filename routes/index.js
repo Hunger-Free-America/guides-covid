@@ -12,6 +12,7 @@ conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD, process.env.SF_SEC_
   if (err) {
     return console.error(err);
   }
+  console.log(conn.accessToken);
   conn.query('SELECT Id, Name FROM Account', function (err, res) {
     if (err) {
       return console.error(err);
