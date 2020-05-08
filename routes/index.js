@@ -164,6 +164,9 @@ router.get('/submit', function (req, res, next) {
     }
   });
   var body = JSON.stringify(order);
+
+  console.log(conn.instanceUrl);
+
   conn.request({
     method: 'post',
     url: '/services/data/v48.0/commerce/sale/order',
