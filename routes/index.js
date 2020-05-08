@@ -4,8 +4,10 @@ const db = require('../database');
 const jsforce = require('jsforce');
 
 var conn = new jsforce.Connection({
-  loginUrl: 'https://test.salesforce.com'
+  loginUrl: 'https://test.salesforce.com',
+  instanceUrl: 'cs4.salesforce.com'
 });
+
 conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD, process.env.SF_SEC_TOKEN, function (err, res) {
   if (err) {
     return console.error(err);
