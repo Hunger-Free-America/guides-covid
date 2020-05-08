@@ -5,12 +5,14 @@ var jsforce = require('jsforce');
 
 var conn = new jsforce.Connection({
   // you can change loginUrl to connect to sandbox or prerelease env.
-  loginUrl : 'https://test.salesforce.com',
+  loginUrl: 'https://test.salesforce.com',
   instanceUrl: 'https://cs2.salesforce.com'
 });
 
-conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD+process.env.SF_SEC_TOKEN, function(err, userInfo) {
-  if (err) { return console.error(err); }
+conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD + process.env.SF_SEC_TOKEN, function (err, userInfo) {
+  if (err) {
+    return console.error(err);
+  }
   // Now you can get the access token and instance URL information.
   // Save them to establish connection next time.
   console.log(conn.accessToken);
@@ -164,18 +166,21 @@ router.get('/submit', function (req, res, next) {
       records: orderItems
     }
   });
-  var body = JSON.stringify(order);
-  console.log(body);
+  var body = {
+    order: order
+  };
+
+  console.log(JSON.stringify(body));
 
   console.log('access Token:' + conn.accessToken);
 
-  conn.request({ 
+  conn.request({
     method: 'post',
     url: '/services/data/v48.0/commerce/sale/order',
     headers: {
       'Content-Type': 'application/json'
     },
-    body
+    body: JSON.stringify(body)
   }, function (err, res) {
     if (err) {
       return console.error(err);
