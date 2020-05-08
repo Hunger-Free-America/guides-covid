@@ -148,7 +148,7 @@ router.get('/submit', function (req, res, next) {
       },
       "PricebookEntryId": pbeId,
       "quantity": cartItems[item].quantity,
-      "UnitPrice": cartItems[item].price
+      "UnitPrice": 0
     });
     //console.log(orderItems);
   }
