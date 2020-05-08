@@ -5,7 +5,7 @@ const jsforce = require('jsforce');
 
 var conn = new jsforce.Connection({
   loginUrl: 'https://test.salesforce.com',
-  instanceUrl: 'https://cs4.salesforce.com'
+  //instanceUrl: 'https://cs4.salesforce.com'
 });
 
 conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD, process.env.SF_SEC_TOKEN, function (err, res) {
