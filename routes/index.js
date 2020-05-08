@@ -151,8 +151,7 @@ router.get('/submit', function (req, res, next) {
     console.log(orderItems);
   }
   var date = new Date(Date.now());
-  var order = []
-  order.push({
+  var order = {
     attributes: {
       type: 'order'
     },
@@ -163,13 +162,12 @@ router.get('/submit', function (req, res, next) {
     orderItems: {
       records: orderItems
     }
-  });
+  };
   var body = JSON.stringify(order);
 
-  console.log('fuck u');
   console.log('access Token:' + conn.accessToken);
 
-  conn.request({
+  conn.request({ 
     method: 'post',
     url: '/services/data/v48.0/commerce/sale/order',
     headers: {
