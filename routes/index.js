@@ -165,7 +165,8 @@ router.get('/submit', function (req, res, next) {
   });
   var body = JSON.stringify(order);
 
-  console.log(conn.instanceUrl);
+  console.log('fuck u');
+  console.log('instance url:' + conn.instanceUrl);
 
   conn.request({
     method: 'post',
