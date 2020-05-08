@@ -148,10 +148,11 @@ router.get('/submit', function (req, res, next) {
       "quantity": cartItems[item].quantity,
       "UnitPrice": cartItems[item].price
     });
-    console.log(orderItems);
+    //console.log(orderItems);
   }
   var date = new Date(Date.now());
-  var order = {
+  var order = []
+  order.push({
     attributes: {
       type: 'order'
     },
@@ -162,8 +163,9 @@ router.get('/submit', function (req, res, next) {
     orderItems: {
       records: orderItems
     }
-  };
+  });
   var body = JSON.stringify(order);
+  console.log(body);
 
   console.log('access Token:' + conn.accessToken);
 
