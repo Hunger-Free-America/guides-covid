@@ -165,7 +165,7 @@ router.get('/submit', function (req, res, next) {
   var body = JSON.stringify(order);
   conn.request({
     method: 'post',
-    url: 'https://cs4.salesforce.com/services/data/v48.0/commerce/sale/order',
+    url: 'https://cs2.salesforce.com/services/data/v48.0/commerce/sale/order',
     headers: {
       'Content-Type': 'application/json'
     },
