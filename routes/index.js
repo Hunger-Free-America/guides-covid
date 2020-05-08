@@ -4,8 +4,7 @@ const db = require('../database');
 const jsforce = require('jsforce');
 
 var conn = new jsforce.Connection({
-  loginUrl: 'https://test.salesforce.com',
-  instanceUrl: 'cs4.salesforce.com'
+  loginUrl: 'https://test.salesforce.com'
 });
 
 conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD, process.env.SF_SEC_TOKEN, function (err, res) {
@@ -166,7 +165,7 @@ router.get('/submit', function (req, res, next) {
   var body = JSON.stringify(order);
   conn.request({
     method: 'post',
-    url: '/services/data/v48.0/commerce/sale/order',
+    url: 'https://cs4.salesforce.com/services/data/v48.0/commerce/sale/order',
     headers: {
       'Content-Type': 'application/json'
     },
