@@ -21,7 +21,7 @@ conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD, process.env.SF_SEC_
   });
 });
 
-console.log(conn.accessToken);
+console.log('access token: ' + conn.accessToken);
 
 const fs = require('fs');
 var products;
