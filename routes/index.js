@@ -1,3 +1,8 @@
+/**
+ * I don't like this but basically everything is in this one file and I don't have time to fix it because I am on a time budget! 
+ * Sorry future Atticus!
+ */
+
 const express = require('express');
 const router = express.Router();
 const db = require('../database');
@@ -24,17 +29,41 @@ conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD + process.env.SF_SEC
 });
 
 const fs = require('fs');
+
 var products;
+var pricebook;
+var pricebookEntries;
 
 const Cart = require('../models/cart');
 
-db.any('SELECT * FROM salesforce.product2')
+// Get active products
+db.any('SELECT * FROM salesforce.product2 WHERE isActive = TRUE')
   .then(function (data) {
     products = data;
     console.log('products: ' + products);
   })
   .catch(function (error) {
     console.error(error);
+  });
+
+//get active pricebook. will need refactoring in multiple pricebooks are used.
+db.one('SELECT sfid FROM salesforce.pricebook2 WHERE isActive = TRUE')
+  .then(data => {
+    console.log('pricebook:' + data.sfid);
+    pricebook = data.sfid;
+
+    db.any('SELECT productcode, sfid FROM salesforce.pricebookEntry WHERE pricebook2Id = $1', [pricebook])
+      .then(data => {
+        //console.log('91: pbe: ' + JSON.stringify(data));
+        pricebookEntries = data;
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+  })
+  .catch(error => {
+    console.log(error);
   });
 
 router.get('/', function (req, res, next) {
@@ -97,29 +126,6 @@ router.get('/remove/:id', function (req, res, next) {
   res.redirect('/cart');
 });
 
-var pricebook;
-var pricebookEntries;
-
-//get active pricebook. will need refactoring in multiple pricebooks are used.
-db.one('SELECT sfid FROM salesforce.pricebook2 WHERE isActive = TRUE')
-  .then(data => {
-    console.log('pricebook:' + data.sfid);
-    pricebook = data.sfid;
-
-    db.any('SELECT productcode, sfid FROM salesforce.pricebookEntry WHERE pricebook2Id = $1', [pricebook])
-      .then(data => {
-        //console.log('91: pbe: ' + JSON.stringify(data));
-        pricebookEntries = data;
-      })
-      .catch(error => {
-        console.log(error);
-      });
-
-  })
-  .catch(error => {
-    console.log(error);
-  });
-
 router.get('/checkout', function (req, res, next) {
   res.render('checkout');
 });
@@ -139,19 +145,22 @@ router.get('/submit', function (req, res, next) {
 
   for (var item in cartItems) {
     //get price book entry id by product code
-    let pbeId = pricebookEntries.filter(pbe => pbe.productcode === cartItems[item].item.productcode)[0].sfid;
+    let pbe = pricebookEntries.filter(pbe => pbe.productcode === cartItems[item].item.productcode)[0];
 
     //add item to order items array
     orderItems.push({
       "attributes": {
         "type": "OrderItem"
       },
-      "PricebookEntryId": pbeId,
+      "PricebookEntryId": pbe.sfid,
       "quantity": cartItems[item].quantity,
-      "UnitPrice": 0
+      "UnitPrice": pbe.UnitPrice
     });
     //console.log(orderItems);
   }
+
+  var ids = accConHelper(cname, fname, lname, street, state, city, zip, email, phone);
+
   var date = new Date(Date.now());
   var order = []
   order.push({
@@ -160,7 +169,8 @@ router.get('/submit', function (req, res, next) {
     },
     EffectiveDate: date.toISOString(),
     Status: 'Draft',
-    accountId: '001R000001aJOrXIAW',
+    accountId: ids[0],
+    CustomerAuthorizedById: ids[1],
     Pricebook2Id: pricebook,
     orderItems: {
       records: orderItems
@@ -201,5 +211,140 @@ router.get('/submit', function (req, res, next) {
    */
   res.redirect('/');
 });
+
+/**
+ * Queries Salesforce to check if an Account exists by Account Name
+ * @param {String} accountName 
+ * @returns {Object} Account Name and Id
+ */
+function checkAccount(accountName) {
+
+  var records = [];
+  conn.query("SELECT Id, Name FROM Account WHERE Name LIKE '%" + accountName + "%'", function (err, result) {
+    if (err) {
+      return console.error(err);
+    }
+    console.log("total : " + result.totalSize);
+    console.log("fetched : " + result.records.length);
+    console.log("First Reccord Name: " + result[0].Name);
+    return result[0].Id;
+  });
+}
+
+function checkContact(fname, lname) {
+
+  var records = [];
+  conn.query("SELECT Id, FirstName, LastName, Name FROM Contact WHERE FirstName LIKE '%" + fname + "%' AND LastName LIKE '%" + lname + "%'", function (err, result) {
+    if (err) {
+      return console.error(err);
+    }
+    console.log("total : " + result.totalSize);
+    console.log("fetched : " + result.records.length);
+    console.log("First Reccord Name: " + result[0].Name);
+    return result[0].Id;
+  });
+}
+
+/**
+ * Creates an Account
+ * @param {String} accountName 
+ * @param {String} street 
+ * @param {String} zip 
+ * @param {String} city 
+ * @param {String} state 
+ * @returns {String} AccountId
+ */
+function createAccount(accountName, street, zip, city, state) {
+
+  var id;
+  conn.sobject("Account").create({
+    Name: accountName,
+    ShippingStreet: street,
+    ShippingCity: city,
+    ShippingState: state,
+    ShippingPostalCode: zip,
+
+  }, function (err, ret) {
+    if (err || !ret.success) {
+      return console.error(err, ret);
+    }
+    console.log("Created Account record id: " + ret.id);
+    id = ret.id;
+  });
+  return id;
+}
+
+/**
+ * Creates a Contact that is linked to an Account
+ * @param {String} firstName 
+ * @param {String} lastName 
+ * @param {String} accountId 
+ * @returns {String} ContactId
+ */
+function createContactWithAccount(firstName, lastName, accountId, email, phone) {
+  var id;
+  conn.sobject("Contact").create({
+    FirstName: firstName,
+    LastName: lastName,
+    AccountId: accountId,
+    Email: email,
+    Phone: phone
+  }, function (err, ret) {
+    if (err || !ret.success) {
+      return console.error(err, ret);
+    }
+    console.log("Created Contact reccord id: " + ret.id);
+    id = ret.id;
+  });
+  return id;
+}
+
+function createContact(firstName, lastName, street, state, city, zip, email, phone) {
+  var id;
+  conn.sobject("Contact").create({
+    FirstName: firstName,
+    LastName: lastName,
+    Email: email,
+    Phone: phone,
+    MaillingStreet: street,
+    MailingCity: city,
+    MailingState: state,
+    MailingPostalCode: zip
+  }, function (err, ret) {
+    if (err || !ret.success) {
+      throw console.error(err, ret);
+    }
+    console.log("Created Contact reccord id: " + ret.id);
+    id = ret.id;
+  });
+  return id;
+}
+
+function accConHelper(accountname, firstName, lastName, street, state, city, zip, email, phone) {
+  var accId = '';
+  var contactId = '';
+
+  if (accountname != null || accountname === '') {
+    try {
+      accId = checkAccount(accountname);
+    } catch (e) {
+      accId = createAccount(accountname, street, zip, city, state);
+    }
+    try {
+      contactId = checkContact(firstName, lastName);
+    } catch (e) {
+      var contactId = createContactWithAccount(firstName, lastName, accId, email, phone);
+    }
+  } else {
+    try {
+      contactId = checkContact(firstName, lastName);
+    } catch (e) {
+      var contactId = createContact(firstName, lastName, street, state, city, zip, email, phone);
+      var accId = checkAccount(lastName);
+    }
+  }
+
+  return [accId, contactId];
+}
 
 module.exports = router;
