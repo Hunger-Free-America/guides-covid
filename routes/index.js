@@ -268,6 +268,7 @@ function createAccount(accountName, street, zip, city, state) {
 
   }, function (err, ret) {
     if (err || !ret.success) {
+      console.error(err, ret)
       return console.error(err, ret);
     }
     console.log("Created Account record id: " + ret.id);
@@ -293,6 +294,7 @@ function createContactWithAccount(firstName, lastName, accountId, email, phone) 
     Phone: phone
   }, function (err, ret) {
     if (err || !ret.success) {
+      console.err(err, ret)
       return console.error(err, ret);
     }
     console.log("Created Contact reccord id: " + ret.id);
@@ -323,29 +325,39 @@ function createContact(firstName, lastName, street, state, city, zip, email, pho
 }
 
 function accConHelper(accountname, firstName, lastName, street, state, city, zip, email, phone) {
+  console.log('helping!')
   var accId = '';
   var contactId = '';
 
   if (accountname != null || accountname === '') {
     try {
       accId = checkAccount(accountname);
+      console.log(accId);
     } catch (e) {
+      console.error(e);
       accId = createAccount(accountname, street, zip, city, state);
+      console.log(accId);
     }
     try {
       contactId = checkContact(firstName, lastName);
+      console.log(contactId);
     } catch (e) {
-      var contactId = createContactWithAccount(firstName, lastName, accId, email, phone);
+      console.error(e);
+      contactId = createContactWithAccount(firstName, lastName, accId, email, phone);
+      console.log(contactId)
     }
   } else {
     try {
       contactId = checkContact(firstName, lastName);
+      console.log(contactId);
     } catch (e) {
+      console.error(e);
       var contactId = createContact(firstName, lastName, street, state, city, zip, email, phone);
       var accId = checkAccount(lastName);
+      console.log(contactId, accId);
     }
   }
-
+  console.log(accId, contactId);
   return [accId, contactId];
 }
 
