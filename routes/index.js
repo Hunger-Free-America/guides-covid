@@ -135,6 +135,7 @@ router.get('/submit', function (req, res, next) {
   const lname = req.body.lastName;
   const cname = req.body.companyName;
   const email = req.body.email;
+  const phone = req.body.phone;
   const street = req.body.shippingStreet;
   const zip = req.body.shippingZip;
   const city = req.body.shippingCity;
