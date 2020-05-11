@@ -229,6 +229,9 @@ function checkAccount(accountName) {
     console.log("total : " + result.totalSize);
     console.log("fetched : " + result.records.length);
     console.log("First Reccord Name: " + result[0].Name);
+    if(result.records.length === 0){
+      return console.error('no reccords found');
+    }
     return result[0].Id;
   });
 }
