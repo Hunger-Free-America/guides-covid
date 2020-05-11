@@ -347,6 +347,7 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
       console.log(contactId)
     }
   } else {
+    console.log('got here');
     try {
       contactId = checkContact(firstName, lastName);
       console.log(contactId);
