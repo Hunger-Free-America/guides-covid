@@ -160,8 +160,8 @@ router.get('/submit', function (req, res, next) {
     });
     //console.log(orderItems);
   }
-
-  setTimeout(() => {var ids = accConHelper(cname, fname, lname, street, state, city, zip, email, phone)}, 2000);
+  var ids = [];
+  setTimeout(() => {ids = accConHelper(cname, fname, lname, street, state, city, zip, email, phone)}, 2000);
   
   var date = new Date(Date.now());
   var order = []
