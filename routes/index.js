@@ -161,8 +161,8 @@ router.get('/submit', function (req, res, next) {
     //console.log(orderItems);
   }
 
-  var ids = accConHelper(cname, fname, lname, street, state, city, zip, email, phone);
-
+  setTimeout(() => {var ids = accConHelper(cname, fname, lname, street, state, city, zip, email, phone)}, 2000);
+  
   var date = new Date(Date.now());
   var order = []
   order.push({
@@ -349,6 +349,7 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
   } else {
     console.log('got here');
     try {
+      console.log('trying!');
       contactId = checkContact(firstName, lastName);
       console.log(contactId);
     } catch (e) {
