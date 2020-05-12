@@ -254,9 +254,12 @@ function checkContact(fname, lname, callback) {
     if (err) {
       return console.error(err);
     }
-    console.log("total : " + result.totalSize);
-    console.log("fetched : " + result.records.length);
-    console.log("First Reccord Name: " + result[0].Name);
+    console.log("total contacts: " + result.totalSize);
+    console.log("fetched contacts: " + result.records.length);
+    console.log("First contact Name: " + result[0].Name);
+    if (result.records.length === 0) {
+      return callback(new Error('no reccords found'));
+    }
     return callback(result[0].Id);
   });
 }
@@ -282,7 +285,7 @@ function createAccount(accountName, street, zip, city, state, callback) {
 
   }, function (err, ret) {
     if (err || !ret.success) {
-      console.error(err, ret)
+      console.error('create account error: ' + err + 'ret: ' + ret)
       return callback(err);
     }
     console.log("Created Account record id: " + ret.id);
@@ -308,7 +311,7 @@ function createContactWithAccount(firstName, lastName, accountId, email, phone, 
     Phone: phone
   }, function (err, ret) {
     if (err || !ret.success) {
-      console.err(err, ret)
+      console.error('create contact with account error: ' + err + 'ret: ' + ret)
       return callback(err);
     }
     console.log("Created Contact reccord id: " + ret.id);
@@ -330,6 +333,7 @@ function createContact(firstName, lastName, street, state, city, zip, email, pho
     MailingPostalCode: zip
   }, function (err, ret) {
     if (err || !ret.success) {
+      console.error('create contact error: ' + err + 'ret: ' + ret)
       callback(err);
     }
     console.log("Created Contact reccord id: " + ret.id);
@@ -347,7 +351,7 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
     checkAccount(accountname, (err, data) => {
       console.log('checking account on line 348');
       if (err) {
-        console.log(e);
+        console.error('error: ' + e);
         createAccount(accountname, street, zip, city, state, (err, data) => {
           console.log('creating Account on like 352');
           if (err) {
