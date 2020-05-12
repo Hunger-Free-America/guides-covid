@@ -350,70 +350,70 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
 
   if (accountname != null && accountname !== '') {
     console.log('check account 1 err: ' + err + 'data: ' + data);
-    checkAccount(accountname, (error, data) => {
+    setTimeout(checkAccount(accountname, (error, data) => {
       if (error) {
         console.error('error: ' + error);
         console.log('creating Account on like 358');
-        createAccount(accountname, street, zip, city, state, (err, data) => {
+        setTimeout(createAccount(accountname, street, zip, city, state, (err, data) => {
           if (err) {
             console.error(err);
             callback(err);
           }
           accId = data;
-        });
+        }),0);
         console.log('account id: ' + accId);
       }
       accId = data;
-    });
+    }),0);
     console.log(accId);
 
-    checkContact(firstName, lastName, (err, data) => {
+    setTimeout(checkContact(firstName, lastName, (err, data) => {
       console.log('check contact 2 err' + err + 'data: ' + data);
       if (err) {
         console.error(err);
         console.log(accId);
-        createContactWithAccount(firstName, lastName, accId, email, phone, (err, data) => {
+        setTimeout(createContactWithAccount(firstName, lastName, accId, email, phone, (err, data) => {
           console.log('creating contact')
           if (err) {
             console.error(err);
             callback(err);
           }
           contactId = data;
-        });
+        }),0);
         console.log(contactId)
       }
       contactId = data;
-    });
+    }),0);
     console.log(contactId);
 
   } else {
-    checkContact(firstName, lastName, (err, data) => {
+    setTimeout(checkContact(firstName, lastName, (err, data) => {
       console.log('check contact 2 err' + err + 'data: ' + data);
       if (err) {
         console.error(err);
-        createContact(firstName, lastName, street, state, city, zip, email, phone, (err, data) => {
+        setTimeout(createContact(firstName, lastName, street, state, city, zip, email, phone, (err, data) => {
           if (err) {
             callback(err);
           }
           contactId = data;
-        });
-        checkAccount(lastName, (err, data) => {
+        }),0);
+        setTimeout(checkAccount(lastName, (err, data) => {
           if (err) {
             callback(err);
           }
           console.log('check acc data 2: ' + data);
           accId = data;
-        });
+        }),0);
       }
       contactId = data;
-      checkAccount(lastName, (err, data) => {
+      setTimeout(checkAccount(lastName, (err, data) => {
         if (err) {
           callback(err);
         }
         console.log('check acc data 3: ' + data);
         accId = data;
-      });
-    });
+      }),0);
+    }),0);
     console.log(contactId);
   }
   console.log(accId, contactId);
