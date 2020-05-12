@@ -243,7 +243,7 @@ function checkAccount(accountName, callback) {
     if (result.records.length === 0) {
       callback(new Error('no reccords found'));
     }
-    callback(result[0].Id);
+    callback(null, result[0].Id);
   });
 }
 
@@ -262,7 +262,7 @@ function checkContact(fname, lname, callback) {
     if (result.totalSize === 0) {
       callback(new Error('no reccords found!'));
     }
-    callback(result[0].Id);
+    callback(null, result[0].Id);
   });
 }
 
@@ -293,7 +293,7 @@ function createAccount(accountName, street, zip, city, state, callback) {
     console.log("Created Account record id: " + ret.id);
     id = ret.id;
   });
-  callback(id);
+  callback(null, id);
 }
 
 /**
@@ -320,7 +320,7 @@ function createContactWithAccount(firstName, lastName, accountId, email, phone, 
     console.log("Created Contact reccord id: " + ret.id);
     id = ret.id;
   });
-  callback(id);
+  callback(null, id);
 }
 
 function createContact(firstName, lastName, street, state, city, zip, email, phone, callback) {
@@ -342,7 +342,7 @@ function createContact(firstName, lastName, street, state, city, zip, email, pho
     console.log("Created Contact reccord id: " + ret.id);
     id = ret.id;
   });
-  callback(id);
+  callback(null, id);
 }
 
 function accConHelper(accountname, firstName, lastName, street, state, city, zip, email, phone, callback) {
@@ -351,12 +351,12 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
   var contactId = '';
 
   if (accountname != null && accountname !== '') {
-    checkAccount(accountname, (err, data) => {
-      console.log('checking account on line 348');
-      if (err) {
-        console.error('error: ' + e);
+    console.log('checking account on line 354');
+    checkAccount(accountname, (error, data) => {
+      if (error) {
+        console.error('error: ' + error);
+        console.log('creating Account on like 358');
         createAccount(accountname, street, zip, city, state, (err, data) => {
-          console.log('creating Account on like 352');
           if (err) {
             console.error(err);
             callback(err);
@@ -372,7 +372,7 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
     checkContact(firstName, lastName, (err, data) => {
       console.log('checking contcact on line 366');
       if (err) {
-        console.error(e);
+        console.error(err);
         createContactWithAccount(firstName, lastName, accId, email, phone, (err, data) => {
           console.log('creating contact')
           if (err) {
@@ -390,7 +390,7 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
   } else {
     checkContact(firstName, lastName, (err, data) => {
       if (err) {
-        console.error(e);
+        console.error(err);
         createContact(firstName, lastName, street, state, city, zip, email, phone, (err, data) => {
           if (err) {
             callback(err);
@@ -416,7 +416,7 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
   }
   console.log(accId, contactId);
   setTimeout(() => {
-    callback([accId, contactId])
+    callback(null, [accId, contactId])
   }, 1000);
 }
 
