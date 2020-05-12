@@ -343,27 +343,31 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
   var accId = '';
   var contactId = '';
 
-  if (accountname != null || accountname !== '') {
+  if (accountname != null && accountname !== '') {
     checkAccount(accountname, (err, data) => {
+      console.log('checking account on line 348');
       if (err) {
-        console.error(e);
+        console.log(e);
         createAccount(accountname, street, zip, city, state, (err, data) => {
+          console.log('creating Account on like 352');
           if (err) {
             console.error(err);
             callback(err);
           }
           accId = data;
         });
-        console.log(accId);
+        console.log('account id: '+accId);
       }
       accId = data;
     });
     console.log(accId);
 
     checkContact(firstName, lastName, (err, data) => {
+      console.log('checking contcact on line 366');
       if (err) {
         console.error(e);
         createContactWithAccount(firstName, lastName, accId, email, phone, (err, data) => {
+          console.log('creating contact')
           if (err) {
             console.error(err);
             callback(err);
