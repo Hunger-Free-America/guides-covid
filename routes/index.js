@@ -161,9 +161,8 @@ router.get('/submit', function (req, res, next) {
     //console.log(orderItems);
   }
   var ids = [];
-  console.log('frack');
-  setTimeout(() => {ids = accConHelper(cname, fname, lname, street, state, city, zip, email, phone)}, 60000);
-  console.log('frick');
+  ids = accConHelper(cname, fname, lname, street, state, city, zip, email, phone)
+
   var date = new Date(Date.now());
   var order = []
   order.push({
@@ -186,21 +185,22 @@ router.get('/submit', function (req, res, next) {
   console.log(JSON.stringify(body));
 
   console.log('access Token:' + conn.accessToken);
-
-  conn.request({
-    method: 'post',
-    url: '/services/data/v48.0/commerce/sale/order',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(body)
-  }, function (err, res) {
-    if (err) {
-      return console.error(err);
-    }
-    console.log("response: ", res);
-    // the response object structure depends on the definition of apex class
-  });
+  setTimeout(() => {
+    conn.request({
+      method: 'post',
+      url: '/services/data/v48.0/commerce/sale/order',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    }, function (err, res) {
+      if (err) {
+        return console.error(err);
+      }
+      console.log("response: ", res);
+    });
+  }, 0);
+  
   //console.log('order: ' + JSON.stringify(order));
   /*
    * If company name field is blank order account id = household account.
@@ -230,8 +230,8 @@ function checkAccount(accountName) {
     console.log("total : " + result.totalSize);
     console.log("fetched : " + result.records.length);
     console.log("First Reccord Name: " + result[0].Name);
-    if(result.records.length === 0){
-      return console.error('no reccords found');
+    if (result.records.length === 0) {
+      return console.error('no reccords found')
     }
     return result[0].Id;
   });
@@ -339,27 +339,27 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
       console.log(accId);
     } catch (e) {
       console.error(e);
-      setTimeout(() => {accId = createAccount(accountname, street, zip, city, state)});
+      accId = createAccount(accountname, street, zip, city, state);
       console.log(accId);
     }
     try {
-      csetTimeout(() => {ontactId = checkContact(firstName, lastName)});
+      contactId = checkContact(firstName, lastName);
       console.log(contactId);
     } catch (e) {
       console.error(e);
-      setTimeout(() => {contactId = createContactWithAccount(firstName, lastName, accId, email, phone)});
+      contactId = createContactWithAccount(firstName, lastName, accId, email, phone);
       console.log(contactId)
     }
   } else {
     console.log('got here');
     try {
       console.log('trying!');
-      setTimeout(() => {contactId = checkContact(firstName, lastName)});
+      contactId = checkContact(firstName, lastName);
       console.log(contactId);
     } catch (e) {
       console.error(e);
-      setTimeout(() => {contactId = createContact(firstName, lastName, street, state, city, zip, email, phone)});
-        setTimeout(() => {accId = checkAccount(lastName)});
+      contactId = createContact(firstName, lastName, street, state, city, zip, email, phone);
+      accId = checkAccount(lastName);
       console.log(contactId, accId);
     }
   }
