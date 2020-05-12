@@ -130,16 +130,16 @@ router.get('/checkout', function (req, res, next) {
   res.render('checkout');
 });
 
-router.get('/submit', function (req, res, next) {
-  const fname = req.body.firstName;
-  const lname = req.body.lastName;
-  const cname = req.body.companyName;
-  const email = req.body.email;
-  const phone = req.body.phone;
-  const street = req.body.shippingStreet;
-  const zip = req.body.shippingZip;
-  const city = req.body.shippingCity;
-  const state = req.body.ShippingState;
+router.post('/checkout', function (req, res, next) {
+  var fname = req.body.firstName;
+  var lname = req.body.lastName;
+  var cname = req.body.companyName;
+  var email = req.body.email;
+  var phone = req.body.phone;
+  var street = req.body.shippingStreet;
+  var zip = req.body.shippingZip;
+  var city = req.body.shippingCity;
+  var state = req.body.ShippingState;
   var cart = new Cart(req.session.cart);
 
 
