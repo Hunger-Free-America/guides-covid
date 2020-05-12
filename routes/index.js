@@ -251,7 +251,7 @@ function checkContact(fname, lname, callback) {
   console.log('checkContact...');
   var records = [];
   conn.query("SELECT Id, FirstName, LastName, Name FROM Contact WHERE FirstName LIKE '%" + fname + "%' AND LastName LIKE '%" + lname + "%'", function (err, result) {
-    console.log('error:' + err + "res: " + result)
+    console.log('error:' + err + "res: " + JSON.stringify(result));
     if (err) {
       console.log(err);
       callback(err);
