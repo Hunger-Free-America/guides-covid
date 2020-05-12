@@ -259,7 +259,7 @@ function checkContact(fname, lname, callback) {
     console.log("total contacts: " + result.totalSize);
     console.log("fetched contacts: " + result.records.length);
     console.log("First contact Name: " + result[0].Name);
-    if (result.records.length === 0) {
+    if (result.totalSize === 0) {
       callback(new Error('no reccords found!'));
     }
     callback(result[0].Id);
