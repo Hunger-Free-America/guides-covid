@@ -164,8 +164,9 @@ function processOrder(order, postOrder) {
 };
 
 function postOrder(error, ids) {
+  console.log('posting');
   if (error) {
-    return console.error(error);
+    return console.log(error);
   } else {
 
     var orderItems = [];
