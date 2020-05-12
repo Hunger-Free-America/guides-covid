@@ -256,7 +256,7 @@ function checkContact(fname, lname, callback) {
     console.log("total contacts: " + result.totalSize);
     console.log("fetched contacts: " + result.records.length);
     console.log("First contact Name: " + result[0].Name);
-    if (result.totalSize === 0) {
+    if (result.totalSize == 0) {
       callback(new Error('no reccords found!'));
       console.log('no contact reccords found, throwing error');
     }
@@ -371,6 +371,7 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
       console.log('check contact 2 err' + err + 'data: ' + data);
       if (err) {
         console.error(err);
+        console.log(accId);
         createContactWithAccount(firstName, lastName, accId, email, phone, (err, data) => {
           console.log('creating contact')
           if (err) {
