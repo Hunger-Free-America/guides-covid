@@ -140,7 +140,6 @@ router.get('/submit', function (req, res, next) {
   const zip = req.body.shippingZip;
   const city = req.body.shippingCity;
   const state = req.body.ShippingState;
-  var cart = new Cart(req.session.cart);
 
   console.log('frick');
   accConHelper(cname, fname, lname, street, state, city, zip, email, phone, postOrder);
@@ -168,7 +167,7 @@ function postOrder(error, ids) {
   if (error) {
     return console.log('error: ' + error);
   } else {
-
+    var cart = new Cart(req.session.cart);
     var orderItems = [];
     var cartItems = cart.getItems();
 
