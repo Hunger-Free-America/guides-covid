@@ -140,9 +140,11 @@ router.get('/submit', function (req, res, next) {
   const zip = req.body.shippingZip;
   const city = req.body.shippingCity;
   const state = req.body.ShippingState;
+  var cart = new Cart(req.session.cart);
+
 
   console.log('frick');
-  accConHelper(cname, fname, lname, street, state, city, zip, email, phone, postOrder);
+  accConHelper(cname, fname, lname, street, state, city, zip, email, phone, cart, postOrder);
 
   //console.log('order: ' + JSON.stringify(order));
   /*
@@ -158,16 +160,11 @@ router.get('/submit', function (req, res, next) {
   res.redirect('/');
 });
 
-function processOrder(order, postOrder) {
-
-};
-
-function postOrder(error, ids) {
+function postOrder(error, ids, cart) {
   console.log('posting');
   if (error) {
     return console.log('error: ' + error);
   } else {
-    var cart = new Cart(req.session.cart);
     var orderItems = [];
     var cartItems = cart.getItems();
 
@@ -344,7 +341,7 @@ function createContact(firstName, lastName, street, state, city, zip, email, pho
   callback(null, id);
 }
 
-function accConHelper(accountname, firstName, lastName, street, state, city, zip, email, phone, callback) {
+function accConHelper(accountname, firstName, lastName, street, state, city, zip, email, phone, cart, callback) {
   console.log('helping!')
   var accId = '';
   var contactId = '';
@@ -415,7 +412,7 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
   }
   console.log(accId, contactId);
   setTimeout(() => {
-    callback(null, [accId, contactId])
+    callback(null, [accId, contactId], cart)
   }, 1000);
 }
 
