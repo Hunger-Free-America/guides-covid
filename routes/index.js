@@ -408,7 +408,7 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
     console.log(contactId);
 }
 console.log(accId, contactId);
-setTimeout(callback([accId, contactId]), 10000);
+setTimeout(() =>{callback([accId, contactId])}, 10000);
 }
 
 module.exports = router;
