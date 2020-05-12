@@ -166,7 +166,7 @@ function processOrder(order, postOrder) {
 function postOrder(error, ids) {
   console.log('posting');
   if (error) {
-    return console.log('error: '+error);
+    return console.log('error: ' + error);
   } else {
 
     var orderItems = [];
@@ -231,36 +231,36 @@ function postOrder(error, ids) {
  * @returns {Object} Account Name and Id
  */
 function checkAccount(accountName, callback) {
-
+  console.log('checkContact');
   var records = [];
   conn.query("SELECT Id, Name FROM Account WHERE Name LIKE '%" + accountName + "%'", function (err, result) {
     if (err) {
-      return callback(err);
+      callback(err);
     }
     console.log("total : " + result.totalSize);
     console.log("fetched : " + result.records.length);
     console.log("First Reccord Name: " + result[0].Name);
     if (result.records.length === 0) {
-      return callback(new Error('no reccords found'));
+      callback(new Error('no reccords found'));
     }
-    return callback(result[0].Id);
+    callback(result[0].Id);
   });
 }
 
 function checkContact(fname, lname, callback) {
-
+  console.log('checkContact');
   var records = [];
   conn.query("SELECT Id, FirstName, LastName, Name FROM Contact WHERE FirstName LIKE '%" + fname + "%' AND LastName LIKE '%" + lname + "%'", function (err, result) {
     if (err) {
-      return console.error(err);
+      callback(err);
     }
     console.log("total contacts: " + result.totalSize);
     console.log("fetched contacts: " + result.records.length);
     console.log("First contact Name: " + result[0].Name);
     if (result.records.length === 0) {
-      return callback(new Error('no reccords found'));
+      callback(new Error('no reccords found'));
     }
-    return callback(result[0].Id);
+    callback(result[0].Id);
   });
 }
 
@@ -274,7 +274,7 @@ function checkContact(fname, lname, callback) {
  * @returns {String} AccountId
  */
 function createAccount(accountName, street, zip, city, state, callback) {
-
+  console.log('createAccount...');
   var id;
   conn.sobject("Account").create({
     Name: accountName,
@@ -286,12 +286,12 @@ function createAccount(accountName, street, zip, city, state, callback) {
   }, function (err, ret) {
     if (err || !ret.success) {
       console.error('create account error: ' + err + 'ret: ' + ret)
-      return callback(err);
+      callback(err);
     }
     console.log("Created Account record id: " + ret.id);
     id = ret.id;
   });
-  return callback(id);
+  callback(id);
 }
 
 /**
@@ -302,6 +302,7 @@ function createAccount(accountName, street, zip, city, state, callback) {
  * @returns {String} ContactId
  */
 function createContactWithAccount(firstName, lastName, accountId, email, phone, callback) {
+  console.log('createContactWithAccount...');
   var id;
   conn.sobject("Contact").create({
     FirstName: firstName,
@@ -312,12 +313,12 @@ function createContactWithAccount(firstName, lastName, accountId, email, phone, 
   }, function (err, ret) {
     if (err || !ret.success) {
       console.error('create contact with account error: ' + err + 'ret: ' + ret)
-      return callback(err);
+      callback(err);
     }
     console.log("Created Contact reccord id: " + ret.id);
     id = ret.id;
   });
-  return callback(id);
+  callback(id);
 }
 
 function createContact(firstName, lastName, street, state, city, zip, email, phone, callback) {
@@ -339,7 +340,7 @@ function createContact(firstName, lastName, street, state, city, zip, email, pho
     console.log("Created Contact reccord id: " + ret.id);
     id = ret.id;
   });
-  return callback(id);
+  callback(id);
 }
 
 function accConHelper(accountname, firstName, lastName, street, state, city, zip, email, phone, callback) {
@@ -360,7 +361,7 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
           }
           accId = data;
         });
-        console.log('account id: '+accId);
+        console.log('account id: ' + accId);
       }
       accId = data;
     });
@@ -410,9 +411,11 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
       });
     });
     console.log(contactId);
-}
-console.log(accId, contactId);
-setTimeout(() =>{callback([accId, contactId])}, 10000);
+  }
+  console.log(accId, contactId);
+  setTimeout(() => {
+    callback([accId, contactId])
+  }, 1000);
 }
 
 module.exports = router;
