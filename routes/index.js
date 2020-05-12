@@ -161,8 +161,9 @@ router.get('/submit', function (req, res, next) {
     //console.log(orderItems);
   }
   var ids = [];
-  setTimeout(() => {ids = accConHelper(cname, fname, lname, street, state, city, zip, email, phone)}, 2000);
-  
+  console.log(frack);
+  setTimeout(() => {ids = accConHelper(cname, fname, lname, street, state, city, zip, email, phone)}, 60000);
+  console.log('frick');
   var date = new Date(Date.now());
   var order = []
   order.push({
