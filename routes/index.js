@@ -161,8 +161,11 @@ router.get('/submit', function (req, res, next) {
     //console.log(orderItems);
   }
   var ids = [];
+  console.log('frick');
   ids = accConHelper(cname, fname, lname, street, state, city, zip, email, phone)
+  console.log(ids);
 
+  setTimeout(() => {
   var date = new Date(Date.now());
   var order = []
   order.push({
@@ -185,7 +188,7 @@ router.get('/submit', function (req, res, next) {
   console.log(JSON.stringify(body));
 
   console.log('access Token:' + conn.accessToken);
-  setTimeout(() => {
+  
     conn.request({
       method: 'post',
       url: '/services/data/v48.0/commerce/sale/order',
@@ -200,7 +203,7 @@ router.get('/submit', function (req, res, next) {
       console.log("response: ", res);
     });
   }, 0);
-  
+
   //console.log('order: ' + JSON.stringify(order));
   /*
    * If company name field is blank order account id = household account.
