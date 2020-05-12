@@ -349,7 +349,7 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
   var contactId;
 
   if (accountname != null && accountname !== '') {
-    console.log('checking account on line 354');
+    console.log('check account 1 err: ' + err + 'data: ' + data);
     checkAccount(accountname, (error, data) => {
       if (error) {
         console.error('error: ' + error);
@@ -368,7 +368,7 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
     console.log(accId);
 
     checkContact(firstName, lastName, (err, data) => {
-      console.log('checking contcact on line 366');
+      console.log('check contact 2 err' + err + 'data: ' + data);
       if (err) {
         console.error(err);
         createContactWithAccount(firstName, lastName, accId, email, phone, (err, data) => {
@@ -387,6 +387,7 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
 
   } else {
     checkContact(firstName, lastName, (err, data) => {
+      console.log('check contact 2 err' + err + 'data: ' + data);
       if (err) {
         console.error(err);
         createContact(firstName, lastName, street, state, city, zip, email, phone, (err, data) => {
@@ -399,6 +400,7 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
           if (err) {
             callback(err);
           }
+          console.log('check acc data 2: ' + data);
           accId = data;
         });
       }
@@ -407,6 +409,7 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
         if (err) {
           callback(err);
         }
+        console.log('check acc data 3: ' + data);
         accId = data;
       });
     });
