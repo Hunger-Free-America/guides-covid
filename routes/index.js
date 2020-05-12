@@ -141,68 +141,9 @@ router.get('/submit', function (req, res, next) {
   const city = req.body.shippingCity;
   const state = req.body.ShippingState;
   var cart = new Cart(req.session.cart);
-  let orderItems = [];
 
-  var cartItems = cart.getItems();
-
-  for (var item in cartItems) {
-    //get price book entry id by product code
-    let pbe = pricebookEntries.filter(pbe => pbe.productcode === cartItems[item].item.productcode)[0];
-
-    //add item to order items array
-    orderItems.push({
-      "attributes": {
-        "type": "OrderItem"
-      },
-      "PricebookEntryId": pbe.sfid,
-      "quantity": cartItems[item].quantity,
-      "UnitPrice": pbe.UnitPrice
-    });
-    //console.log(orderItems);
-  }
-  var ids = [];
   console.log('frick');
-  ids = accConHelper(cname, fname, lname, street, state, city, zip, email, phone)
-  console.log(ids);
-
-  setTimeout(() => {
-  var date = new Date(Date.now());
-  var order = []
-  order.push({
-    attributes: {
-      type: 'order'
-    },
-    EffectiveDate: date.toISOString(),
-    Status: 'Draft',
-    accountId: ids[0],
-    CustomerAuthorizedById: ids[1],
-    Pricebook2Id: pricebook,
-    orderItems: {
-      records: orderItems
-    }
-  });
-  var body = {
-    order: order
-  };
-
-  console.log(JSON.stringify(body));
-
-  console.log('access Token:' + conn.accessToken);
-  
-    conn.request({
-      method: 'post',
-      url: '/services/data/v48.0/commerce/sale/order',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(body)
-    }, function (err, res) {
-      if (err) {
-        return console.error(err);
-      }
-      console.log("response: ", res);
-    });
-  }, 0);
+  accConHelper(cname, fname, lname, street, state, city, zip, email, phone, postOrder);
 
   //console.log('order: ' + JSON.stringify(order));
   /*
@@ -218,29 +159,94 @@ router.get('/submit', function (req, res, next) {
   res.redirect('/');
 });
 
+function processOrder(order, postOrder) {
+
+};
+
+function postOrder(error, ids) {
+  if (error) {
+    return console.error(error);
+  } else {
+
+    var orderItems = [];
+    var cartItems = cart.getItems();
+
+    for (var item in cartItems) {
+      //get price book entry id by product code
+      let pbe = pricebookEntries.filter(pbe => pbe.productcode === cartItems[item].item.productcode)[0];
+      //add item to order items array
+      orderItems.push({
+        "attributes": {
+          "type": "OrderItem"
+        },
+        "PricebookEntryId": pbe.sfid,
+        "quantity": cartItems[item].quantity,
+        "UnitPrice": pbe.UnitPrice
+      });
+      //console.log(orderItems);
+    }
+
+    var date = new Date(Date.now());
+    var order = []
+    order.push({
+      attributes: {
+        type: 'order'
+      },
+      EffectiveDate: date.toISOString(),
+      Status: 'Draft',
+      accountId: ids[0],
+      CustomerAuthorizedById: ids[1],
+      Pricebook2Id: pricebook,
+      orderItems: {
+        records: orderItems
+      }
+    });
+    var body = {
+      order: order
+    };
+
+    console.log(JSON.stringify(body));
+    console.log('access Token:' + conn.accessToken);
+
+    conn.request({
+      method: 'post',
+      url: '/services/data/v48.0/commerce/sale/order',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    }, function (err, res) {
+      if (err) {
+        return console.error(err);
+      }
+      console.log("response: ", res);
+    });
+  }
+}
+
 /**
  * Queries Salesforce to check if an Account exists by Account Name
  * @param {String} accountName 
  * @returns {Object} Account Name and Id
  */
-function checkAccount(accountName) {
+function checkAccount(accountName, callback) {
 
   var records = [];
   conn.query("SELECT Id, Name FROM Account WHERE Name LIKE '%" + accountName + "%'", function (err, result) {
     if (err) {
-      return console.error(err);
+      return callback(err);
     }
     console.log("total : " + result.totalSize);
     console.log("fetched : " + result.records.length);
     console.log("First Reccord Name: " + result[0].Name);
     if (result.records.length === 0) {
-      return console.error('no reccords found')
+      return callback(new Error('no reccords found'));
     }
-    return result[0].Id;
+    return callback(result[0].Id);
   });
 }
 
-function checkContact(fname, lname) {
+function checkContact(fname, lname, callback) {
 
   var records = [];
   conn.query("SELECT Id, FirstName, LastName, Name FROM Contact WHERE FirstName LIKE '%" + fname + "%' AND LastName LIKE '%" + lname + "%'", function (err, result) {
@@ -250,7 +256,7 @@ function checkContact(fname, lname) {
     console.log("total : " + result.totalSize);
     console.log("fetched : " + result.records.length);
     console.log("First Reccord Name: " + result[0].Name);
-    return result[0].Id;
+    return callback(result[0].Id);
   });
 }
 
@@ -263,7 +269,7 @@ function checkContact(fname, lname) {
  * @param {String} state 
  * @returns {String} AccountId
  */
-function createAccount(accountName, street, zip, city, state) {
+function createAccount(accountName, street, zip, city, state, callback) {
 
   var id;
   conn.sobject("Account").create({
@@ -276,12 +282,12 @@ function createAccount(accountName, street, zip, city, state) {
   }, function (err, ret) {
     if (err || !ret.success) {
       console.error(err, ret)
-      return console.error(err, ret);
+      return callback(err);
     }
     console.log("Created Account record id: " + ret.id);
     id = ret.id;
   });
-  return id;
+  return callback(id);
 }
 
 /**
@@ -291,7 +297,7 @@ function createAccount(accountName, street, zip, city, state) {
  * @param {String} accountId 
  * @returns {String} ContactId
  */
-function createContactWithAccount(firstName, lastName, accountId, email, phone) {
+function createContactWithAccount(firstName, lastName, accountId, email, phone, callback) {
   var id;
   conn.sobject("Contact").create({
     FirstName: firstName,
@@ -302,15 +308,15 @@ function createContactWithAccount(firstName, lastName, accountId, email, phone) 
   }, function (err, ret) {
     if (err || !ret.success) {
       console.err(err, ret)
-      return console.error(err, ret);
+      return callback(err);
     }
     console.log("Created Contact reccord id: " + ret.id);
     id = ret.id;
   });
-  return id;
+  return callback(id);
 }
 
-function createContact(firstName, lastName, street, state, city, zip, email, phone) {
+function createContact(firstName, lastName, street, state, city, zip, email, phone, callback) {
   var id;
   conn.sobject("Contact").create({
     FirstName: firstName,
@@ -323,51 +329,81 @@ function createContact(firstName, lastName, street, state, city, zip, email, pho
     MailingPostalCode: zip
   }, function (err, ret) {
     if (err || !ret.success) {
-      throw console.error(err, ret);
+      callback(err);
     }
     console.log("Created Contact reccord id: " + ret.id);
     id = ret.id;
   });
-  return id;
+  return callback(id);
 }
 
-function accConHelper(accountname, firstName, lastName, street, state, city, zip, email, phone) {
+function accConHelper(accountname, firstName, lastName, street, state, city, zip, email, phone, callback) {
   console.log('helping!')
   var accId = '';
   var contactId = '';
 
-  if (accountname != null || accountname === '') {
-    try {
-      accId = checkAccount(accountname);
-      console.log(accId);
-    } catch (e) {
-      console.error(e);
-      accId = createAccount(accountname, street, zip, city, state);
-      console.log(accId);
-    }
-    try {
-      contactId = checkContact(firstName, lastName);
-      console.log(contactId);
-    } catch (e) {
-      console.error(e);
-      contactId = createContactWithAccount(firstName, lastName, accId, email, phone);
-      console.log(contactId)
-    }
+  if (accountname != null || accountname !== '') {
+    checkAccount(accountname, (err, data) => {
+      if (err) {
+        console.error(e);
+        createAccount(accountname, street, zip, city, state, (err, data) => {
+          if (err) {
+            console.error(err);
+            callback(err);
+          }
+          accId = data;
+        });
+        console.log(accId);
+      }
+      accId = data;
+    });
+    console.log(accId);
+
+    checkContact(firstName, lastName, (err, data) => {
+      if (err) {
+        console.error(e);
+        createContactWithAccount(firstName, lastName, accId, email, phone, (err, data) => {
+          if (err) {
+            console.error(err);
+            callback(err);
+          }
+          contactId = data;
+        });
+        console.log(contactId)
+      }
+      contactId = data;
+    });
+    console.log(contactId);
+
   } else {
-    console.log('got here');
-    try {
-      console.log('trying!');
-      contactId = checkContact(firstName, lastName);
-      console.log(contactId);
-    } catch (e) {
-      console.error(e);
-      contactId = createContact(firstName, lastName, street, state, city, zip, email, phone);
-      accId = checkAccount(lastName);
-      console.log(contactId, accId);
-    }
-  }
-  console.log(accId, contactId);
-  return [accId, contactId];
+    checkContact(firstName, lastName, (err, data) => {
+      if (err) {
+        console.error(e);
+        createContact(firstName, lastName, street, state, city, zip, email, phone, (err, data) => {
+          if (err) {
+            callback(err);
+          }
+          contactId = data;
+        });
+        checkAccount(lastName, (err, data) => {
+          if (err) {
+            callback(err);
+          }
+          accId = data;
+        });
+      }
+      contactId = data;
+      checkAccount(lastName, (err, data) => {
+        if (err) {
+          callback(err);
+        }
+        accId = data;
+      });
+    });
+    console.log(contactId);
+}
+console.log(accId, contactId);
+return callback([accId, contactId]);
 }
 
 module.exports = router;
