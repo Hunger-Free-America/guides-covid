@@ -11,7 +11,9 @@ var pgSession = require('connect-pg-simple')(session);
 
 var app = express();
 var index = require('./routes/index');
-
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(session({
     store: new pgSession({
@@ -24,9 +26,7 @@ app.use(session({
     cookie: { maxAge: 10 * 10 * 6000000 },
 }));
 
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+
 
 
 // view engine setup

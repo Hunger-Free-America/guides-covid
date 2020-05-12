@@ -2,9 +2,8 @@
  * I don't like this but basically everything is in this one file and I don't have time to fix it because I am on a time budget! 
  * Sorry future Atticus!
  */
-
 const express = require('express');
-const router = express.Router();
+var router = express.Router();
 const db = require('../database');
 var jsforce = require('jsforce');
 
@@ -130,34 +129,27 @@ router.get('/checkout', function (req, res, next) {
   res.render('checkout');
 });
 
-router.post('/checkout', function (req, res, next) {
-  var fname = req.body.firstName;
-  var lname = req.body.lastName;
-  var cname = req.body.companyName;
-  var email = req.body.email;
-  var phone = req.body.phone;
-  var street = req.body.shippingStreet;
-  var zip = req.body.shippingZip;
-  var city = req.body.shippingCity;
-  var state = req.body.ShippingState;
+router.route('/submit').get(function (req, res, next) {
+  console.log(req.body);
+  var fname = req.query['firstName'];
+  var lname = req.query['lastName'];
+  var cname = req.query['companyName'];
+  var email = req.query['email'];
+  var phone = req.query['phone'];
+  var street = req.query['shippingStreet'];
+  var zip = req.query['shippingZip'];
+  var city = req.query['shippingCity'];
+  var state = req.query['ShippingState'];
   var cart = new Cart(req.session.cart);
 
 
   console.log('frick');
   accConHelper(cname, fname, lname, street, state, city, zip, email, phone, cart, postOrder);
 
-  //console.log('order: ' + JSON.stringify(order));
-  /*
-   * If company name field is blank order account id = household account.
-   * order authorized by id = contact id.
-   * Check if contact/household account exists. if no create it.
-   * check if company account exists. if not create it.
-   * shipping address = address
-   * pricebook2Id = pbeId
-   * efective date = today
-   * status = draft
-   */
-  res.redirect('/');
+  res.render('checkout', {
+    body: req.body
+  });
+
 });
 
 function postOrder(error, ids, cart) {
