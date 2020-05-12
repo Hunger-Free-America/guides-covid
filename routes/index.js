@@ -343,8 +343,8 @@ function createContact(firstName, lastName, street, state, city, zip, email, pho
 
 function accConHelper(accountname, firstName, lastName, street, state, city, zip, email, phone, cart, callback) {
   console.log('helping!')
-  var accId = '';
-  var contactId = '';
+  var accId;
+  var contactId;
 
   if (accountname != null && accountname !== '') {
     console.log('checking account on line 354');
@@ -413,7 +413,7 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
   console.log(accId, contactId);
   setTimeout(() => {
     callback(null, [accId, contactId], cart)
-  }, 1000);
+  }, 10000);
 }
 
 module.exports = router;
