@@ -227,7 +227,7 @@ function postOrder(error, ids, cart) {
  * @returns {Object} Account Name and Id
  */
 function checkAccount(accountName, callback) {
-  console.log('checkContact');
+  console.log('checkAccount...');
   var records = [];
   conn.query("SELECT Id, Name FROM Account WHERE Name LIKE '%" + accountName + "%'", function (err, result) {
     if (err) {
@@ -238,6 +238,7 @@ function checkAccount(accountName, callback) {
     console.log("First Reccord Name: " + result[0].Name);
     if (result.records.length === 0) {
       callback(new Error('no reccords found'));
+      console.log('check account no reccords found error')
     }
     callback(null, result[0].Id);
   });
@@ -247,7 +248,7 @@ function checkContact(fname, lname, callback) {
   console.log('checkContact...');
   var records = [];
   conn.query("SELECT Id, FirstName, LastName, Name FROM Contact WHERE FirstName LIKE '%" + fname + "%' AND LastName LIKE '%" + lname + "%'", function (err, result) {
-    console.log('error:' + err + "res: " + JSON.stringify(result));
+    console.log('check contact error:' + err + "res: " + JSON.stringify(result));
     if (err) {
       console.log(err);
       callback(err);
@@ -257,6 +258,7 @@ function checkContact(fname, lname, callback) {
     console.log("First contact Name: " + result[0].Name);
     if (result.totalSize === 0) {
       callback(new Error('no reccords found!'));
+      console.log('no contact reccords found, throwing error');
     }
     callback(null, result[0].Id);
   });
@@ -284,7 +286,7 @@ function createAccount(accountName, street, zip, city, state, callback) {
   }, function (err, ret) {
     if (err || !ret.success) {
       console.error('create account error: ' + err + 'ret: ' + ret)
-      callback(err);
+      callback(err ? err : new Error(ret));
     }
     console.log("Created Account record id: " + ret.id);
     id = ret.id;
@@ -311,7 +313,7 @@ function createContactWithAccount(firstName, lastName, accountId, email, phone, 
   }, function (err, ret) {
     if (err || !ret.success) {
       console.error('create contact with account error: ' + err + 'ret: ' + ret)
-      callback(err);
+      callback(err ? err : new Error(ret));
     }
     console.log("Created Contact reccord id: " + ret.id);
     id = ret.id;
@@ -333,7 +335,7 @@ function createContact(firstName, lastName, street, state, city, zip, email, pho
   }, function (err, ret) {
     if (err || !ret.success) {
       console.error('create contact error: ' + err + 'ret: ' + ret)
-      callback(err);
+      callback(err ? err : new Error(ret));
     }
     console.log("Created Contact reccord id: " + ret.id);
     id = ret.id;
