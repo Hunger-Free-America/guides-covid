@@ -338,27 +338,27 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
       console.log(accId);
     } catch (e) {
       console.error(e);
-      accId = createAccount(accountname, street, zip, city, state);
+      setTimeout(() => {accId = createAccount(accountname, street, zip, city, state)});
       console.log(accId);
     }
     try {
-      contactId = checkContact(firstName, lastName);
+      csetTimeout(() => {ontactId = checkContact(firstName, lastName)});
       console.log(contactId);
     } catch (e) {
       console.error(e);
-      contactId = createContactWithAccount(firstName, lastName, accId, email, phone);
+      setTimeout(() => {contactId = createContactWithAccount(firstName, lastName, accId, email, phone)});
       console.log(contactId)
     }
   } else {
     console.log('got here');
     try {
       console.log('trying!');
-      contactId = checkContact(firstName, lastName);
+      setTimeout(() => {contactId = checkContact(firstName, lastName)});
       console.log(contactId);
     } catch (e) {
       console.error(e);
-      var contactId = createContact(firstName, lastName, street, state, city, zip, email, phone);
-      var accId = checkAccount(lastName);
+      setTimeout(() => {contactId = createContact(firstName, lastName, street, state, city, zip, email, phone)});
+        setTimeout(() => {accId = checkAccount(lastName)});
       console.log(contactId, accId);
     }
   }
