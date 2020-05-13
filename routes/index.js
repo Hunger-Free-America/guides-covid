@@ -129,17 +129,18 @@ router.get('/checkout', function (req, res, next) {
   res.render('checkout');
 });
 
+
 router.route('/submit').get(function (req, res, next) {
   console.log(req.body);
   var fname = req.query['firstName'];
   var lname = req.query['lastName'];
-  var cname = req.query['companyName'];
+  var cname = req.query['company'];
   var email = req.query['email'];
   var phone = req.query['phone'];
   var street = req.query['shippingStreet'];
   var zip = req.query['shippingZip'];
   var city = req.query['shippingCity'];
-  var state = req.query['ShippingState'];
+  var state = req.query['shippingState'];
   var cart = new Cart(req.session.cart);
 
 
@@ -228,12 +229,13 @@ function checkAccount(accountName, callback) {
     console.log("total : " + result.totalSize);
     console.log("fetched : " + result.records.length);
     console.log("First Reccord Name: " + result[0].Name);
-    if (result.records.length === 0) {
-      callback(new Error('no reccords found'));
-      console.log('check account no reccords found error')
-    }
-    callback(null, result[0].Id);
+    records = result;
   });
+  if (records.length === 0) {
+    callback(new Error('no reccords found'));
+    console.log('check account no reccords found error')
+  }
+  callback(null, result[0].Id)
 }
 
 function checkContact(fname, lname, callback) {
@@ -248,12 +250,13 @@ function checkContact(fname, lname, callback) {
     console.log("total contacts: " + result.totalSize);
     console.log("fetched contacts: " + result.records.length);
     console.log("First contact Name: " + result[0].Name);
-    if (result.totalSize == 0) {
-      callback(new Error('no reccords found!'));
-      console.log('no contact reccords found, throwing error');
-    }
-    callback(null, result[0].Id);
+    records = result;
   });
+  if (records.totalSize == 0) {
+    callback(new Error('no reccords found!'));
+    console.log('no contact reccords found, throwing error');
+  }
+  callback(null, records[0].Id);
 }
 
 /**
@@ -340,42 +343,42 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
   var accId;
   var contactId;
 
-  if (accountname != null && accountname !== '') {
-    console.log('check account 1 err: ' + err + 'data: ' + data);
+  if (accountname != undefined && accountname !== '') {
+    //console.log('check account 1 err: ' + err + 'data: ' + data);
     checkAccount(accountname, (error, data) => {
       if (error) {
         console.error('error: ' + error);
         console.log('creating Account on like 358');
-        setTimeout(() => {createAccount(accountname, street, zip, city, state, (err, data) => {
+        createAccount(accountname, street, zip, city, state, (err, data) => {
           if (err) {
             console.error(err);
             callback(err);
           }
           accId = data;
-        })},0);
+        });
         console.log('account id: ' + accId);
       }
       accId = data;
     });
     console.log(accId);
 
-    setTimeout(() => {checkContact(firstName, lastName, (err, data) => {
+    checkContact(firstName, lastName, (err, data) => {
       console.log('check contact 2 err' + err + 'data: ' + data);
       if (err) {
         console.error(err);
         console.log(accId);
-        setTimeout(() => {createContactWithAccount(firstName, lastName, accId, email, phone, (err, data) => {
+        createContactWithAccount(firstName, lastName, accId, email, phone, (err, data) => {
           console.log('creating contact')
           if (err) {
             console.error(err);
             callback(err);
           }
           contactId = data;
-        })},0);
+        });
         console.log(contactId)
       }
       contactId = data;
-    })},0);
+    });
     console.log(contactId);
 
   } else {
@@ -383,28 +386,28 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
       console.log('check contact 2 err' + err + 'data: ' + data);
       if (err) {
         console.error(err);
-        setTimeout(() => {createContact(firstName, lastName, street, state, city, zip, email, phone, (err, data) => {
+        createContact(firstName, lastName, street, state, city, zip, email, phone, (err, data) => {
           if (err) {
             callback(err);
           }
           contactId = data;
-        })},0);
-        setTimeout(() => {checkAccount(lastName, (err, data) => {
+        });
+        checkAccount(lastName, (err, data) => {
           if (err) {
             callback(err);
           }
           console.log('check acc data 2: ' + data);
           accId = data;
-        })},0);
+        });
       }
       contactId = data;
-      setTimeout(() => {checkAccount(lastName, (err, data) => {
+      checkAccount(lastName, (err, data) => {
         if (err) {
           callback(err);
         }
         console.log('check acc data 3: ' + data);
         accId = data;
-      })},0);
+      });
     });
     console.log(contactId);
   }
