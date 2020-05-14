@@ -324,7 +324,7 @@ function createContact(firstName, lastName, street, state, city, zip, email, pho
     LastName: lastName,
     Email: email,
     Phone: phone,
-    MaillingStreet: street,
+    MailingStreet: street,
     MailingCity: city,
     MailingState: state,
     MailingPostalCode: zip
