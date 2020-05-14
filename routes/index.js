@@ -395,13 +395,14 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
           }
           contactId = data;
           console.log('contact id: ' + contactId);
-        });
-        checkAccount(lastName, (err, data) => {
-          if (err) {
-            callback(err);
-          }
-          console.log('check acc data 2: ' + data);
-          accId = data;
+
+          checkAccount(lastName+' Household', (err, data) => {
+            if (err) {
+              callback(err);
+            }
+            console.log('check acc data 2: ' + data);
+            accId = data;
+          });
         });
       }
       contactId = data;
