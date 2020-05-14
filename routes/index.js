@@ -171,7 +171,7 @@ function postOrder(error, ids, cart) {
         },
         "PricebookEntryId": pbe.sfid,
         "quantity": cartItems[item].quantity,
-        "UnitPrice": pbe.UnitPrice
+        "UnitPrice": pbe.UnitPrice || 0
       });
       //console.log(orderItems);
     }
@@ -418,7 +418,7 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
   setTimeout(() => {
     console.log(accId, contactId);
     callback(null, [accId, contactId], cart)
-  }, 10000);
+  }, 15000);
 }
 
 module.exports = router;
