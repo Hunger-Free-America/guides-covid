@@ -13,7 +13,7 @@ var conn = new jsforce.Connection({
   instanceUrl: 'https://cs2.salesforce.com'
 });
 
-conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD + process.env.SF_SEC_TOKEN, function (err, userInfo) {
+conn.login('arains@hungerfreeamerica.org.guidesdev', '9PO0$!pS4dic' + 'u6uRltXnU0KvFBeqCfaEHqTr', function (err, userInfo) {
   if (err) {
     return console.error(err);
   }
@@ -221,42 +221,40 @@ function postOrder(error, ids, cart) {
  */
 function checkAccount(accountName, callback) {
   console.log('checkAccount...');
-  var records = [];
   conn.query("SELECT Id, Name FROM Account WHERE Name LIKE '%" + accountName + "%'", function (err, result) {
     if (err) {
       callback(err);
     }
     console.log("total : " + result.totalSize);
     console.log("fetched : " + result.records.length);
-    console.log("First Reccord Name: " + result[0].Name);
-    records = result;
+    //  console.log("First Reccord Name: " + result.records[0].Name);
+
+    if (result.records.length === 0) {
+      callback(new Error('no reccords found'));
+      console.log('check account no reccords found error');
+      return;
+    }
+    callback(null, result.records[0].Id);
   });
-  if (records.length === 0) {
-    callback(new Error('no reccords found'));
-    console.log('check account no reccords found error')
-  }
-  callback(null, result[0].Id)
 }
 
 function checkContact(fname, lname, callback) {
   console.log('checkContact...');
-  var records = [];
   conn.query("SELECT Id, FirstName, LastName, Name FROM Contact WHERE FirstName LIKE '%" + fname + "%' AND LastName LIKE '%" + lname + "%'", function (err, result) {
-    console.log('check contact error:' + err + "res: " + JSON.stringify(result));
     if (err) {
-      console.log(err);
       callback(err);
     }
-    console.log("total contacts: " + result.totalSize);
-    console.log("fetched contacts: " + result.records.length);
-    console.log("First contact Name: " + result[0].Name);
-    records = result;
+    console.log("total : " + result.totalSize);
+    console.log("fetched : " + result.records.length);
+    //  console.log("First Reccord Name: " + result.records[0].Name);
+
+    if (result.records.length === 0) {
+      callback(new Error('no reccords found'));
+      console.log('check contacts no reccords found error');
+      return;
+    }
+    callback(null, result.records[0].Id);
   });
-  if (records.totalSize == 0) {
-    callback(new Error('no reccords found!'));
-    console.log('no contact reccords found, throwing error');
-  }
-  callback(null, records[0].Id);
 }
 
 /**
@@ -271,6 +269,7 @@ function checkContact(fname, lname, callback) {
 function createAccount(accountName, street, zip, city, state, callback) {
   console.log('createAccount...');
   var id;
+  var error;
   conn.sobject("Account").create({
     Name: accountName,
     ShippingStreet: street,
@@ -281,12 +280,14 @@ function createAccount(accountName, street, zip, city, state, callback) {
   }, function (err, ret) {
     if (err || !ret.success) {
       console.error('create account error: ' + err + 'ret: ' + ret)
-      callback(err ? err : new Error(ret));
+      error = err ? err : new Error(ret);
+      callback(error);
     }
     console.log("Created Account record id: " + ret.id);
     id = ret.id;
+    console.log('fuck u ' + id);
+    callback(null, id);
   });
-  callback(null, id);
 }
 
 /**
@@ -312,8 +313,8 @@ function createContactWithAccount(firstName, lastName, accountId, email, phone, 
     }
     console.log("Created Contact reccord id: " + ret.id);
     id = ret.id;
+    callback(null, id);
   });
-  callback(null, id);
 }
 
 function createContact(firstName, lastName, street, state, city, zip, email, phone, callback) {
@@ -334,8 +335,8 @@ function createContact(firstName, lastName, street, state, city, zip, email, pho
     }
     console.log("Created Contact reccord id: " + ret.id);
     id = ret.id;
+    callback(null, id);
   });
-  callback(null, id);
 }
 
 function accConHelper(accountname, firstName, lastName, street, state, city, zip, email, phone, cart, callback) {
@@ -346,40 +347,42 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
   if (accountname != undefined && accountname !== '') {
     //console.log('check account 1 err: ' + err + 'data: ' + data);
     checkAccount(accountname, (error, data) => {
+      console.log('calling back from check acc 1...');
       if (error) {
         console.error('error: ' + error);
         console.log('creating Account on like 358');
         createAccount(accountname, street, zip, city, state, (err, data) => {
+          console.log('calling back to from create acc 1...');
           if (err) {
             console.error(err);
             callback(err);
           }
           accId = data;
+          console.log('account id: ' + accId);
         });
-        console.log('account id: ' + accId);
       }
       accId = data;
-    });
-    console.log(accId);
+      console.log('account Id: ' + accId);
 
-    checkContact(firstName, lastName, (err, data) => {
-      console.log('check contact 2 err' + err + 'data: ' + data);
-      if (err) {
-        console.error(err);
-        console.log(accId);
-        createContactWithAccount(firstName, lastName, accId, email, phone, (err, data) => {
-          console.log('creating contact')
-          if (err) {
-            console.error(err);
-            callback(err);
-          }
-          contactId = data;
-        });
-        console.log(contactId)
-      }
-      contactId = data;
+      checkContact(firstName, lastName, (err, data) => {
+        console.log('calling back from check contact 1...');
+        if (err) {
+          console.error(err);
+          console.log(accId);
+          createContactWithAccount(firstName, lastName, accId, email, phone, (err, data) => {
+            console.log('calling back from create contact with account 1...')
+            if (err) {
+              console.error(err);
+              callback(err);
+            }
+            contactId = data;
+            console.log('Contact Id: ' + contactId)
+          });
+        }
+        contactId = data;
+        console.log('Contact Id: ' + contactId);
+      });
     });
-    console.log(contactId);
 
   } else {
     checkContact(firstName, lastName, (err, data) => {
@@ -391,6 +394,7 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
             callback(err);
           }
           contactId = data;
+          console.log('contact id: ' + contactId);
         });
         checkAccount(lastName, (err, data) => {
           if (err) {
@@ -407,14 +411,14 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
         }
         console.log('check acc data 3: ' + data);
         accId = data;
+        console.log('contact id: ' + contactId);
       });
     });
-    console.log(contactId);
   }
-  console.log(accId, contactId);
   setTimeout(() => {
+    console.log(accId, contactId);
     callback(null, [accId, contactId], cart)
-  }, 10000);
+  }, 2000);
 }
 
 module.exports = router;
