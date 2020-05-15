@@ -7,6 +7,8 @@ var router = express.Router();
 const db = require('../database');
 var jsforce = require('jsforce');
 
+var title='Hunger Free America Orders';
+
 var conn = new jsforce.Connection({
   // you can change loginUrl to connect to sandbox or prerelease env.
   loginUrl: 'https://test.salesforce.com',
@@ -67,7 +69,7 @@ db.one('SELECT sfid FROM salesforce.pricebook2 WHERE isActive = TRUE')
 
 router.get('/', function (req, res, next) {
   res.render('index', {
-    title: 'Hunger Free Americca Orders',
+    title: title,
     products: products
   });
 });
@@ -94,7 +96,7 @@ router.get('/product/:SKU', function (req, res, next) {
         sku: productSKU,
         title: product.Name,
         description: product.description,
-        //price: product.price
+        price: product.price
       });
     })
     .catch(function (error) {
@@ -111,7 +113,7 @@ router.get('/cart', function (req, res, next) {
   }
   var cart = new Cart(req.session.cart);
   res.render('cart', {
-    title: 'Hunger Free America Orders',
+    title: title,
     products: cart.getItems(),
     totalPrice: cart.totalPrice
   });

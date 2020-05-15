@@ -14,6 +14,7 @@ var index = require('./routes/index');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('public/static/'));
 
 app.use(session({
     store: new pgSession({
