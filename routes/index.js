@@ -13,7 +13,7 @@ var conn = new jsforce.Connection({
   instanceUrl: 'https://cs2.salesforce.com'
 });
 
-conn.login('arains@hungerfreeamerica.org.guidesdev', '9PO0$!pS4dic' + 'u6uRltXnU0KvFBeqCfaEHqTr', function (err, userInfo) {
+conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD + process.env.SF_SEC_TOKEN, function (err, userInfo) {
   if (err) {
     return console.error(err);
   }
@@ -67,18 +67,19 @@ db.one('SELECT sfid FROM salesforce.pricebook2 WHERE isActive = TRUE')
 
 router.get('/', function (req, res, next) {
   res.render('index', {
-    title: 'NodeJS Shopping Cart',
+    title: 'Hunger Free Americca Orders',
     products: products
   });
 });
 
 router.get('/add/:id', function (req, res, next) {
   var productId = req.params.id;
+  var quantity = req.query['qty'];
   var cart = new Cart(req.session.cart ? req.session.cart : {});
   var product = products.filter(function (item) {
     return item.id == productId;
   });
-  cart.add(product[0], productId);
+  cart.add(product[0], productId, quantity);
   req.session.cart = cart;
   res.redirect('/');
 });
@@ -90,7 +91,7 @@ router.get('/product/:SKU', function (req, res, next) {
       let product = data;
       console.log('current product: ' + product);
       res.render('product', {
-        id: product.productcode,
+        sku: productSKU,
         title: product.Name,
         description: product.description,
         //price: product.price
@@ -110,7 +111,7 @@ router.get('/cart', function (req, res, next) {
   }
   var cart = new Cart(req.session.cart);
   res.render('cart', {
-    title: 'NodeJS Shopping Cart',
+    title: 'Hunger Free America Orders',
     products: cart.getItems(),
     totalPrice: cart.totalPrice
   });
@@ -126,7 +127,9 @@ router.get('/remove/:id', function (req, res, next) {
 });
 
 router.get('/checkout', function (req, res, next) {
-  res.render('checkout');
+  res.render('checkout',{
+    title: "Checkout"
+  });
 });
 
 

@@ -7,10 +7,11 @@ a {
   color: #00B7FF;
 }
 
-* {
-  -webkit-border-radius: 0 !important;
-     -moz-border-radius: 0 !important;
-          border-radius: 0 !important;
+.row-border {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 1%;
+  margin: 2%;
 }
 
 .dropdown-menu .cart {
