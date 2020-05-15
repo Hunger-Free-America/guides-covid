@@ -1,7 +1,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8">
-            <img src="/static/img/{{sku}}.jpg" />
+            <img src="/static/img/{{sku}}.png" />
         </div>
         <div class="col-md-4">
             <form action="/add/{{sku}}" method="GET">
@@ -32,7 +32,7 @@
                     <button class="btn btn-primary" type="submit">Add to cart</button>
                 </div>
             </form>
-            <a href="/static/PDFs/{{sku}}" download="{{name.pdf}}" class="btn btn-secondary btn-lg btn-block">Download PDF</a>
+            <a href="/static/PDFs/{{sku}}.pdf" download="{{name}}.pdf" class="btn btn-secondary btn-lg btn-block">Download PDF</a>
             <p>{{price}}</p>
             <p>{{description}}</p>
         </div>
