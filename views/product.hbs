@@ -1,11 +1,11 @@
 <div class="container">
-    <h1>{{name}}</h1>
+    <h1>{{title}}</h1>
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-6">
             <img src="/static/img/{{sku}}.png" class="img-thumbnail"/>
         </div>
-        <div class="col-md-4">
-            <form action="/add/{{sku}}" method="GET">
+        <div class="col-md-6 align-items-center">
+            <form class="form-inline" action="/add/{{sku}}" method="GET">
                 <div class="form-row align-items-center">
                     <label for="qty">Quantity: </label>
                     <select class="form-controll" name="qty">
@@ -33,7 +33,7 @@
                     <button class="btn btn-primary" type="submit">Add to cart</button>
                 </div>
             </form>
-            <a href="/static/PDFs/{{sku}}.pdf" download="{{name}}.pdf" class="btn btn-secondary btn-lg btn-block">Download PDF</a>
+            <a href="/static/PDFs/{{sku}}.pdf" download="{{title}}.pdf" class="btn btn-secondary btn-lg btn-block">Download PDF</a>
             <p>{{price}}</p>
             <p>{{description}}</p>
         </div>

@@ -91,10 +91,10 @@ router.get('/product/:SKU', function (req, res, next) {
   db.one('SELECT * FROM salesforce.product2 WHERE productcode = $1 AND IsActive = TRUE', [productSKU])
     .then(function (data) {
       let product = data;
-      console.log('current product: ' + product);
+      console.log('current product: ' + product.name);
       res.render('product', {
         sku: productSKU,
-        title: product.Name,
+        title: product.name,
         description: product.description,
         price: product.price
       });
