@@ -7,7 +7,7 @@ var router = express.Router();
 const db = require('../database');
 var jsforce = require('jsforce');
 
-var title='Hunger Free America Orders';   
+var title = 'Hunger Free America Orders';
 
 var conn = new jsforce.Connection({
   // you can change loginUrl to connect to sandbox or prerelease env.
@@ -129,7 +129,7 @@ router.get('/remove/:id', function (req, res, next) {
 });
 
 router.get('/checkout', function (req, res, next) {
-  res.render('checkout',{
+  res.render('checkout', {
     title: "Checkout"
   });
 });
@@ -176,7 +176,7 @@ function postOrder(error, ids, cart) {
         },
         "PricebookEntryId": pbe.sfid,
         "quantity": cartItems[item].quantity,
-        "UnitPrice": pbe.UnitPrice || 0
+        "UnitPrice": 0 //pbe.UnitPrice || 0
       });
       //console.log(orderItems);
     }
@@ -401,7 +401,7 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
           contactId = data;
           console.log('contact id: ' + contactId);
 
-          checkAccount(lastName+' Household', (err, data) => {
+          checkAccount(lastName + ' Household', (err, data) => {
             if (err) {
               callback(err);
             }
