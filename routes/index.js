@@ -152,10 +152,10 @@ router.route('/submit').get(function (req, res, next) {
   console.log('frick');
   accConHelper(cname, fname, lname, street, state, city, zip, email, phone, cart, postOrder);
 
-  res.render('checkout', {
-    body: req.body
+  res.render('index', {
+    title: title,
+    products: products
   });
-
 });
 
 function postOrder(error, ids, cart) {
