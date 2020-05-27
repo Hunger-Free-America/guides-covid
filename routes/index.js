@@ -11,8 +11,8 @@ var title = 'Hunger Free America Orders';
 
 var conn = new jsforce.Connection({
   // you can change loginUrl to connect to sandbox or prerelease env.
-  loginUrl: 'https://test.salesforce.com',
-  instanceUrl: 'https://cs2.salesforce.com'
+  loginUrl: 'https://login.salesforce.com',
+  instanceUrl: 'https://na91.salesforce.com'
 });
 
 conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD + process.env.SF_SEC_TOKEN, function (err, userInfo) {
