@@ -40,7 +40,7 @@ var pricebookEntries;
 const Cart = require('../models/cart');
 
 // Get active products
-db.any('SELECT * FROM salesforce.product2 WHERE isActive = TRUE')
+db.any('SELECT * FROM salesforce.product2 WHERE isActive = TRUE ORDER BY Name ASC')
   .then(function (data) {
     products = data;
     console.log('products: ' + products);
