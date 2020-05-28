@@ -1,0 +1,43 @@
+020-05-28T14:28:50.573851+00:00 app[web.1]: 0012E00002J1inmQAB 0032E00002qKBnxQAG
+
+2020-05-28T14:28:50.573955+00:00 app[web.1]: posting
+
+2020-05-28T14:28:50.574951+00:00 app[web.1]: /app/routes/index.js:177
+
+2020-05-28T14:28:50.574952+00:00 app[web.1]:         "PricebookEntryId": pbe.sfid,
+
+2020-05-28T14:28:50.574952+00:00 app[web.1]:                                 ^
+
+2020-05-28T14:28:50.574953+00:00 app[web.1]: 
+
+2020-05-28T14:28:50.574953+00:00 app[web.1]: TypeError: Cannot read property 'sfid' of undefined
+
+2020-05-28T14:28:50.574954+00:00 app[web.1]:     at postOrder (/app/routes/index.js:177:33)
+
+2020-05-28T14:28:50.574954+00:00 app[web.1]:     at Timeout._onTimeout (/app/routes/index.js:426:5)
+
+2020-05-28T14:28:50.574954+00:00 app[web.1]:     at listOnTimeout (internal/timers.js:549:17)
+
+2020-05-28T14:28:50.574954+00:00 app[web.1]:     at processTimers (internal/timers.js:492:7)
+
+2020-05-28T14:28:50.584438+00:00 app[web.1]: npm ERR! code ELIFECYCLE
+
+2020-05-28T14:28:50.584730+00:00 app[web.1]: npm ERR! errno 1
+
+2020-05-28T14:28:50.585603+00:00 app[web.1]: npm ERR! guidesorders@1.0.0 start: `node ./bin/www`
+
+2020-05-28T14:28:50.585750+00:00 app[web.1]: npm ERR! Exit status 1
+
+2020-05-28T14:28:50.585872+00:00 app[web.1]: npm ERR! 
+
+2020-05-28T14:28:50.585956+00:00 app[web.1]: npm ERR! Failed at the guidesorders@1.0.0 start script.
+
+2020-05-28T14:28:50.586096+00:00 app[web.1]: npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+
+2020-05-28T14:28:50.592994+00:00 app[web.1]: 
+
+2020-05-28T14:28:50.593147+00:00 app[web.1]: npm ERR! A complete log of this run can be found in:
+
+2020-05-28T14:28:50.593227+00:00 app[web.1]: npm ERR!     /app/.npm/_logs/2020-05-28T14_28_50_587Z-debug.log
+
+2020-05-28T14:28:50.671329+00:00 heroku[web.1]: State changed from up to crashed

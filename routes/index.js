@@ -169,6 +169,8 @@ function postOrder(error, ids, cart) {
     for (var item in cartItems) {
       //get price book entry id by product code
       let pbe = pricebookEntries.filter(pbe => pbe.productcode === cartItems[item].item.productcode)[0];
+      console.log('pbe' + JSON.stringify(pbe));
+      console.log(cartItems[item].item.productcode);
       //add item to order items array
       orderItems.push({
         "attributes": {
