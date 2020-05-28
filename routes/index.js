@@ -8,6 +8,8 @@ const db = require('../database');
 var jsforce = require('jsforce');
 
 var title = 'Hunger Free America Orders';
+var successMsg = 'Your order has been placed! Thank you! '
+
 
 var conn = new jsforce.Connection({
   // you can change loginUrl to connect to sandbox or prerelease env.
@@ -154,6 +156,7 @@ router.route('/submit').get(function (req, res, next) {
 
   res.render('index', {
     title: title,
+    message: successMsg,
     products: products
   });
 });

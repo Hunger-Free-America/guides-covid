@@ -1,4 +1,11 @@
 <h1>{{title}}</h1>
+
+{{#if message}}
+<div class="alert alert-success" role="alert">
+  {{message}} <a class="alert-link" href="https://secure.givelively.org/donate/hunger-free-america/neighborhood-guides-to-food-assistance">Please consider donating to support the guides.</a>
+</div>
+{{/if}}
+
 <div class="container">
   {{# each products }}
   <div class="row align-items-center row-border">
