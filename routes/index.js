@@ -181,11 +181,7 @@ function postOrder(error, ids, cart, city, state, zip, street) {
         },
         "PricebookEntryId": pbe.sfid,
         "quantity": cartItems[item].quantity,
-        "UnitPrice": 0, //pbe.UnitPrice || 0
-        "shippingCity": city,
-        "shippingStreet": street,
-        "shippingState": state,
-        "shippingPostalCode": zip
+        "UnitPrice": 0 //pbe.UnitPrice || 0
       });
       //console.log(orderItems);
     }
@@ -201,6 +197,10 @@ function postOrder(error, ids, cart, city, state, zip, street) {
       accountId: ids[0],
       CustomerAuthorizedById: ids[1],
       Pricebook2Id: pricebook,
+      "shippingCity": city,
+      "shippingStreet": street,
+      "shippingState": state,
+      "shippingPostalCode": zip,
       orderItems: {
         records: orderItems
       }
