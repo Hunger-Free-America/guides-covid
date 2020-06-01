@@ -13,8 +13,8 @@ var successMsg = 'Your order has been placed! Thank you! '
 
 var conn = new jsforce.Connection({
   // you can change loginUrl to connect to sandbox or prerelease env.
-  loginUrl: 'https://login.salesforce.com',
-  instanceUrl: 'https://na91.salesforce.com'
+  loginUrl: process.env.SF_LOGIN_URL,
+  instanceUrl: process.env.SF_INSTANCE_URL
 });
 
 conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD + process.env.SF_SEC_TOKEN, function (err, userInfo) {
@@ -161,7 +161,7 @@ router.route('/submit').get(function (req, res, next) {
   });
 });
 
-function postOrder(error, ids, cart) {
+function postOrder(error, ids, cart, city, state, zip, street) {
   console.log('posting');
   if (error) {
     return console.log('error: ' + error);
@@ -197,6 +197,10 @@ function postOrder(error, ids, cart) {
       accountId: ids[0],
       CustomerAuthorizedById: ids[1],
       Pricebook2Id: pricebook,
+      "shippingCity": city,
+      "shippingStreet": street,
+      "shippingState": state,
+      "shippingPostalCode": zip,
       orderItems: {
         records: orderItems
       }
@@ -428,7 +432,7 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
   }
   setTimeout(() => {
     console.log(accId, contactId);
-    callback(null, [accId, contactId], cart)
+    callback(null, [accId, contactId], cart, city, state, zip, street)
   }, 15000);
 }
 
