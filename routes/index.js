@@ -13,8 +13,8 @@ var successMsg = 'Your order has been placed! Thank you! '
 
 var conn = new jsforce.Connection({
   // you can change loginUrl to connect to sandbox or prerelease env.
-  loginUrl: 'https://login.salesforce.com',
-  instanceUrl: 'https://na91.salesforce.com'
+  loginUrl: process.env.SF_LOGIN_URL,
+  instanceUrl: process.env.SF_INSTANCE_URL
 });
 
 conn.login(process.env.SF_USERNAME, process.env.SF_PASSWORD + process.env.SF_SEC_TOKEN, function (err, userInfo) {
@@ -181,7 +181,11 @@ function postOrder(error, ids, cart) {
         },
         "PricebookEntryId": pbe.sfid,
         "quantity": cartItems[item].quantity,
-        "UnitPrice": 0 //pbe.UnitPrice || 0
+        "UnitPrice": 0, //pbe.UnitPrice || 0
+        "shippingCity": city,
+        "shippingStreet": street,
+        "shippingState": state,
+        "shippingPostalCode": zip
       });
       //console.log(orderItems);
     }
