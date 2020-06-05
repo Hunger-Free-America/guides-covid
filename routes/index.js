@@ -271,6 +271,23 @@ function checkContact(fname, lname, callback) {
   });
 }
 
+function getAccountFromContact(contactId, callback) {
+  conn.query("SELECT Id, AccountId FROM Contact WHERE Id = '" + contactId + "'", (err, result) => {
+    if (err) {
+      callback(err);
+    }
+    console.log("total : " + result.totalSize);
+    console.log("fetched : " + result.records.length);
+
+    if (result.records.length === 0) {
+      callback(new Error('no reccords found'));
+      console.log('check contacts no reccords found error');
+      return;
+    }
+    callback(null, result.records[0].AccountId);
+  });
+}
+
 /**
  * Creates an Account
  * @param {String} accountName 
@@ -410,23 +427,22 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
           contactId = data;
           console.log('contact id: ' + contactId);
 
-          checkAccount(lastName + ' Household', (err, data) => {
+          getAccountFromContact(contactId, (err, data) => {
             if (err) {
               callback(err);
             }
-            console.log('check acc data 2: ' + data);
+            console.log('acc id = ' + data);
             accId = data;
           });
         });
       }
       contactId = data;
-      checkAccount(lastName, (err, data) => {
+      getAccountFromContact(contactId, (err, data) => {
         if (err) {
           callback(err);
         }
-        console.log('check acc data 3: ' + data);
+        console.log('acc id = ' + data);
         accId = data;
-        console.log('contact id: ' + contactId);
       });
     });
   }
