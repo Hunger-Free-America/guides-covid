@@ -272,7 +272,7 @@ function checkContact(fname, lname, callback) {
 }
 
 function getAccountFromContact(contactId, callback) {
-  conn.query("SELECT Id, AccountId FROM Contact WHERE Id = " + contactId, (err, result) => {
+  conn.query("SELECT Id, AccountId FROM Contact WHERE Id = '" + contactId + "'", (err, result) => {
     if (err) {
       callback(err);
     }
