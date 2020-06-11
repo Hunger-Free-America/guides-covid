@@ -31,4 +31,11 @@ module.exports = function Cart(cart) {
         }
         return arr;
     };
+
+    this.clearCart = function (){
+        this.items = {};
+        this.totalItems = 0;
+        this.totalPrice = 0;
+        console.log('cart cleared');
+    }
 };

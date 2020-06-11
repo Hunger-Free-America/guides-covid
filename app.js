@@ -5,6 +5,10 @@ var logger = require('morgan');
 var path = require('path');
 var bodyParser = require('body-parser');
 
+if(process.env.NODE_ENV==='development'){
+    require('dotenv').config();
+}
+
 const db = require('./database');
 
 var pgSession = require('connect-pg-simple')(session);
