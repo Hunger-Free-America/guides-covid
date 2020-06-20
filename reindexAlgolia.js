@@ -15,7 +15,27 @@ const sitesTable = base(process.env.AIRTABLE_SITES_TABLE);
 (async () => {
     try {
         const objects = [];
-        const sites = await sitesTable.select({ fields: ['siteID'] }).all();
+        const sites = await sitesTable.select({
+            fields: [
+                'siteName',
+                'siteStreetAddress',
+                'siteCity',
+                'siteZip',
+                'lat',
+                'lng',
+                'Status',
+                'Stock Status',
+                'siteType',
+                'siteSubType',
+                'gmaps url',
+                'publicContactMethod',
+                'website',
+                'Public Phones',
+                'Public Emails',
+                'socialMedia',
+                'Verified At'
+            ]
+        }).all();
 
         .
 
