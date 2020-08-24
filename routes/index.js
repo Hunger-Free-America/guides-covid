@@ -10,7 +10,6 @@ var jsforce = require('jsforce');
 var title = 'Hunger Free America Orders';
 var successMsg = 'Your order has been placed! Thank you! '
 
-
 var conn = new jsforce.Connection({
   // you can change loginUrl to connect to sandbox or prerelease env.
   loginUrl: process.env.SF_LOGIN_URL,
@@ -137,23 +136,23 @@ router.get('/checkout', function (req, res, next) {
 });
 
 
-router.route('/submit').get(function (req, res, next) {
+router.route('/submit').post(function (req, res, next) {
   console.log(req.body);
-  var fname = req.query['firstName'];
-  var lname = req.query['lastName'];
-  var cname = req.query['company'];
-  var email = req.query['email'];
-  var phone = req.query['phone'];
-  var street = req.query['shippingStreet'];
-  var zip = req.query['shippingZip'];
-  var city = req.query['shippingCity'];
-  var state = req.query['shippingState'];
+  var fname = req.body['firstName'];
+  var lname = req.body['lastName'];
+  var cname = req.body['company'];
+  var email = req.body['email'];
+  var phone = req.body['phone'];
+  var street = req.body['shippingStreet'];
+  var zip = req.body['shippingZip'];
+  var city = req.body['shippingCity'];
+  var state = req.body['shippingState'];
   var cart = new Cart(req.session.cart);
 
 
-  console.log('frick');
   accConHelper(cname, fname, lname, street, state, city, zip, email, phone, cart, postOrder);
 
+  req.session.cart = {};
   res.render('index', {
     title: title,
     message: successMsg,
@@ -162,7 +161,6 @@ router.route('/submit').get(function (req, res, next) {
 });
 
 function postOrder(error, ids, cart, city, state, zip, street) {
-  console.log('posting');
   if (error) {
     return console.log('error: ' + error);
   } else {
@@ -222,8 +220,11 @@ function postOrder(error, ids, cart, city, state, zip, street) {
     }, function (err, res) {
       if (err) {
         return console.error(err);
+      } else {
+        console.log("response: ", res);
+        //art.clearCart();
       }
-      console.log("response: ", res);
+      
     });
   }
 }
@@ -271,6 +272,45 @@ function checkContact(fname, lname, callback) {
   });
 }
 
+function getAccountFromContact(contactId, callback) {
+  conn.query("SELECT Id, AccountId FROM Contact WHERE Id = '" + contactId + "'", (err, result) => {
+    if (err) {
+      callback(err);
+    }
+    console.log("total : " + result.totalSize);
+    console.log("fetched : " + result.records.length);
+
+    if (result.records.length === 0) {
+      callback(new Error('no reccords found'));
+      console.log('check contacts no reccords found error');
+      return;
+    }
+    callback(null, result.records[0].AccountId);
+  });
+}
+
+/**
+ * Gets the account Id associated with a contact.
+ * @param {String} contactId 
+ * @param {function} callback 
+ */
+function getAccountFromContact(contactId, callback) {
+  conn.query("SELECT Id, AccountId FROM Contact WHERE Id = '" + contactId + "'", (err, result) => {
+    if (err) {
+      callback(err);
+    }
+    console.log("total : " + result.totalSize);
+    console.log("fetched : " + result.records.length);
+
+    if (result.records.length === 0) {
+      callback(new Error('no reccords found'));
+      console.log('check contacts no reccords found error');
+      return;
+    }
+    callback(null, result.records[0].AccountId);
+  });
+}
+
 /**
  * Creates an Account
  * @param {String} accountName 
@@ -299,7 +339,6 @@ function createAccount(accountName, street, zip, city, state, callback) {
     }
     console.log("Created Account record id: " + ret.id);
     id = ret.id;
-    console.log('fuck u ' + id);
     callback(null, id);
   });
 }
@@ -410,23 +449,22 @@ function accConHelper(accountname, firstName, lastName, street, state, city, zip
           contactId = data;
           console.log('contact id: ' + contactId);
 
-          checkAccount(lastName + ' Household', (err, data) => {
+          getAccountFromContact(contactId, (err, data) => {
             if (err) {
               callback(err);
             }
-            console.log('check acc data 2: ' + data);
+            console.log('acc id = ' + data);
             accId = data;
           });
         });
       }
       contactId = data;
-      checkAccount(lastName, (err, data) => {
+      getAccountFromContact(contactId, (err, data) => {
         if (err) {
           callback(err);
         }
-        console.log('check acc data 3: ' + data);
+        console.log('acc id = ' + data);
         accId = data;
-        console.log('contact id: ' + contactId);
       });
     });
   }
