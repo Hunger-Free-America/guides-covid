@@ -39,7 +39,7 @@ var pricebookEntries;
 const Cart = require('../models/cart');
 
 // Get active products
-pool.any('SELECT * FROM salesforce.product2 WHERE isActive = TRUE ORDER BY Name ASC')
+pool.query('SELECT * FROM salesforce.product2 WHERE isActive = TRUE ORDER BY Name ASC')
   .then(function (data) {
     products = data;
     console.log('products: ' + products);
@@ -49,12 +49,12 @@ pool.any('SELECT * FROM salesforce.product2 WHERE isActive = TRUE ORDER BY Name 
   });
 
 //get active pricebook. will need refactoring in multiple pricebooks are used.
-pool.one('SELECT sfid FROM salesforce.pricebook2 WHERE isActive = TRUE')
+pool.query('SELECT sfid FROM salesforce.pricebook2 WHERE isActive = TRUE LIMIT 1')
   .then(data => {
     console.log('pricebook:' + data.sfid);
     pricebook = data.sfid;
 
-    pool.any('SELECT productcode, sfid FROM salesforce.pricebookEntry WHERE pricebook2Id = $1', [pricebook])
+    pool.query('SELECT productcode, sfid FROM salesforce.pricebookEntry WHERE pricebook2Id = $1', [pricebook])
       .then(data => {
         //console.log('91: pbe: ' + JSON.stringify(data));
         pricebookEntries = data;
@@ -89,7 +89,7 @@ router.get('/add/:id', function (req, res, next) {
 
 router.get('/product/:SKU', function (req, res, next) {
   var productSKU = req.params.SKU;
-  pool.one('SELECT * FROM salesforce.product2 WHERE productcode = $1 AND IsActive = TRUE', [productSKU])
+  pool.query('SELECT * FROM salesforce.product2 WHERE productcode = $1 AND IsActive = TRUE LIMIT 1', [productSKU])
     .then(function (data) {
       let product = data;
       console.log('current product: ' + product.name);
