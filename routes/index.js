@@ -4,7 +4,7 @@
  */
 const express = require('express');
 var router = express.Router();
-const db = require('../database');
+const {pool} = require('../database');
 var jsforce = require('jsforce');
 
 var title = 'Hunger Free America Orders';
@@ -39,7 +39,7 @@ var pricebookEntries;
 const Cart = require('../models/cart');
 
 // Get active products
-db.any('SELECT * FROM salesforce.product2 WHERE isActive = TRUE ORDER BY Name ASC')
+pool.any('SELECT * FROM salesforce.product2 WHERE isActive = TRUE ORDER BY Name ASC')
   .then(function (data) {
     products = data;
     console.log('products: ' + products);
@@ -49,12 +49,12 @@ db.any('SELECT * FROM salesforce.product2 WHERE isActive = TRUE ORDER BY Name AS
   });
 
 //get active pricebook. will need refactoring in multiple pricebooks are used.
-db.one('SELECT sfid FROM salesforce.pricebook2 WHERE isActive = TRUE')
+pool.one('SELECT sfid FROM salesforce.pricebook2 WHERE isActive = TRUE')
   .then(data => {
     console.log('pricebook:' + data.sfid);
     pricebook = data.sfid;
 
-    db.any('SELECT productcode, sfid FROM salesforce.pricebookEntry WHERE pricebook2Id = $1', [pricebook])
+    pool.any('SELECT productcode, sfid FROM salesforce.pricebookEntry WHERE pricebook2Id = $1', [pricebook])
       .then(data => {
         //console.log('91: pbe: ' + JSON.stringify(data));
         pricebookEntries = data;
@@ -89,7 +89,7 @@ router.get('/add/:id', function (req, res, next) {
 
 router.get('/product/:SKU', function (req, res, next) {
   var productSKU = req.params.SKU;
-  db.one('SELECT * FROM salesforce.product2 WHERE productcode = $1 AND IsActive = TRUE', [productSKU])
+  pool.one('SELECT * FROM salesforce.product2 WHERE productcode = $1 AND IsActive = TRUE', [productSKU])
     .then(function (data) {
       let product = data;
       console.log('current product: ' + product.name);
@@ -193,7 +193,7 @@ function postOrder(error, ids, cart, city, state, zip, street) {
       EffectiveDate: date.toISOString(),
       Status: 'Draft',
       accountId: ids[0],
-      CustomerAuthorizedById: ids[1],
+      CustomerAuthorizepoolyId: ids[1],
       Pricebook2Id: pricebook,
       "shippingCity": city,
       "shippingStreet": street,

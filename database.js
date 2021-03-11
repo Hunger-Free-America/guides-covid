@@ -1,4 +1,6 @@
-const pgp = require('pg-promise')();
-const cn = process.env.DATABASE_URL + '?sslmode=require';
-const db = pgp(cn);
-module.exports = db;
+const { Pool } = require('pg');
+const pool = new Pool({
+    connectionString: ProcessingInstruction.env.DATABASE_URL,
+    ssl:true
+})
+module.exports = {pool};
