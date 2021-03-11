@@ -98,7 +98,7 @@ router.get('/product/:SKU', function (req, res, next) {
         sku: productSKU,
         title: product.name,
         description: product.description,
-        price: product.price
+        price: 0
       });
     })
     .catch(function (error) {

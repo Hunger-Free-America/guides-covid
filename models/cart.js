@@ -12,9 +12,10 @@ module.exports = function Cart(cart) {
         if(cartItem.quantity >= 250){
             cartItem.quantity = 250;
         }
-        cartItem.price =  0 //cartItem.item.price * cartItem.quantity;
+        cartItem.price =  0; //cartItem.item.price * cartItem.quantity;
         this.totalItems = Object.keys(this.items).length;
-        this.totalPrice += cartItem.item.price;
+        //this.totalPrice += cartItem.item.price;
+        this.totalPrice = 0;
         console.log('cart: ' + JSON.stringify(this.items));
     };
 
