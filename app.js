@@ -21,7 +21,7 @@ app.use(express.static('public/static/'));
 
 app.use(session({
     store: new pgSession({
-        conString: db.$cn,
+        conString: process.env.DATABASE_URL,
     }),
     key: 'user_sid',
     secret: (process.env.SESSION_SECRET || 'ILoveNana1213'),
