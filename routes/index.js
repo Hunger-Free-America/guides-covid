@@ -37,7 +37,7 @@ var pricebook;
 var pricebookEntries;
 
 const Cart = require('../models/cart');
-
+pool.connect();
 // Get active products
 pool.query('SELECT * FROM salesforce.product2 WHERE isActive = TRUE ORDER BY Name ASC')
   .then(function (data) {
