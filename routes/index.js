@@ -42,7 +42,7 @@ pool.connect();
 pool.query('SELECT * FROM salesforce.product2 WHERE isActive = TRUE ORDER BY Name ASC')
   .then(function (data) {
     products = data.rows;
-    console.log('products: ' + products);
+    console.error('products: ' + products);
   })
   .catch(function (error) {
     console.error(error);
