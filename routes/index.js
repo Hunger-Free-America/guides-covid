@@ -85,7 +85,10 @@ router.get('/add/:id', function (req, res, next) {
   cart.add(product[0], productId, quantity);
   req.session.cart = cart;
   console.error(req.session.cart);
-  res.redirect('/');
+  res.render('index', {
+    title: title,
+    products: products
+  });
 });
 
 router.get('/product/:SKU', function (req, res, next) {
